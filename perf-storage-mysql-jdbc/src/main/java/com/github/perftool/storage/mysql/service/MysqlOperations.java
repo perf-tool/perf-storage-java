@@ -23,11 +23,12 @@ import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.github.perftool.storage.mysql.flavor.DefaultDBFlavor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.sql.DataSource;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -37,33 +38,33 @@ public class MysqlOperations extends IThread {
 
 
     private final DefaultDBFlavor defaultDBFlavor;
-    private final ConcurrentMap<String, PreparedStatement> cachedStatements = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> cachedStatements = new ConcurrentHashMap<>();
+    private final DataSource dataSource;
+    private final SecureRandom random = new SecureRandom();
 
-    public MysqlOperations(String operationType, int delaySeconds,
-                           Connection conn, MysqlConfig mysqlConfig) throws SQLException {
+    public MysqlOperations(String operationType, int delaySeconds, MysqlConfig mysqlConfig) {
         super(operationType, delaySeconds);
+        this.dataSource = mysqlConfig.getDataSource();
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
-        cachedStatements.putIfAbsent("INSERT",
-                conn.prepareStatement(defaultDBFlavor.createInsertStatement()));
-        cachedStatements.putIfAbsent("UPDATE",
-                conn.prepareStatement(defaultDBFlavor.createUpdateStatement()));
-        cachedStatements.putIfAbsent("READ",
-                conn.prepareStatement(defaultDBFlavor.createReadStatement()));
-        cachedStatements.putIfAbsent("DELETE",
-                conn.prepareStatement(defaultDBFlavor.createDeleteStatement()));
+        cachedStatements.putIfAbsent("INSERT", defaultDBFlavor.insertStatement());
+        cachedStatements.putIfAbsent("UPDATE", defaultDBFlavor.updateStatement());
+        cachedStatements.putIfAbsent("READ", defaultDBFlavor.readStatement());
+        cachedStatements.putIfAbsent("DELETE", defaultDBFlavor.deleteStatement());
     }
 
     @Override
     public void insertData() {
-        try {
-            PreparedStatement stmt = cachedStatements.get("INSERT");
-            Random random = new Random();
-            int key = random.nextInt();
-            stmt.setInt(1,key);
-            stmt.setInt(2,random.nextInt());
+
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("INSERT"));
+        ) {
+            int key = getRandom();
+            stmt.setInt(1, key);
+            stmt.setInt(2, getRandom());
             stmt.setString(3, "zs");
-            stmt.setString(4, random.nextInt() + "");
-            stmt.setString(5, random.nextInt() + "");
+            stmt.setString(4, getRandom() + "");
+            stmt.setString(5, getRandom() + "");
             stmt.setString(6, "addr");
             int result = stmt.executeUpdate();
             if (result == 1) {
@@ -79,8 +80,10 @@ public class MysqlOperations extends IThread {
 
     @Override
     public void updateData() {
-        try {
-            PreparedStatement stmt = cachedStatements.get("UPDATE");
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("UPDATE"));
+        ) {
             stmt.setInt(1, ids.get(0));
             int ret = stmt.executeUpdate();
             if (ret == 1) {
@@ -95,12 +98,14 @@ public class MysqlOperations extends IThread {
 
     @Override
     public void readData() {
-        try {
-            PreparedStatement stmt = cachedStatements.get("READ");
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("READ"));
+        ) {
             ResultSet resultSet = stmt.executeQuery();
             int count = 0;
             while (resultSet.next()) {
-                count ++;
+                count++;
             }
             log.info("read data size : {}", count);
         } catch (SQLException e) {
@@ -110,8 +115,10 @@ public class MysqlOperations extends IThread {
 
     @Override
     public void deleteData() {
-        try {
-            PreparedStatement stmt = cachedStatements.get("DELETE");
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("DELETE"));
+        ) {
             stmt.setInt(1, ids.get(0));
             int ret = stmt.executeUpdate();
             if (ret == 1) {
@@ -123,6 +130,9 @@ public class MysqlOperations extends IThread {
         } catch (SQLException e) {
             log.error("delete data fail. ", e);
         }
+    }
 
+    private int getRandom() {
+        return random.nextInt();
     }
 }

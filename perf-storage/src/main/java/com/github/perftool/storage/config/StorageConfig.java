@@ -1,9 +1,3 @@
-package com.github.perftool.storage.config;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -22,6 +16,11 @@ import org.springframework.stereotype.Component;
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.perftool.storage.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 @Component
 @Configuration

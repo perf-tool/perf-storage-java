@@ -1,4 +1,3 @@
-package com.github.perftool.storage.mysql.config;
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -8,7 +7,7 @@ package com.github.perftool.storage.mysql.config;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -17,17 +16,23 @@ package com.github.perftool.storage.mysql.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.perftool.storage.mysql.config;
+
+import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @Configuration
 @Component
 @Service
 public class MysqlConfig {
 
-    @Value("${MYSQL_HOST:127.0.0.1}")
+    @Value("${MYSQL_HOST:192.168.122.131}")
     public String host;
 
     @Value("${MYSQL_PORT:3306}")
@@ -57,5 +62,18 @@ public class MysqlConfig {
     @Value("${OPERATION_TYPE:INSERT}")
     public String operationType;
 
+    public DataSource getDataSource() {
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
+        dataSource.setUrl(String.format("jdbc:mariadb://%s:%d/%s", host, port, dbName));
+        dataSource.setUsername(user);
+        dataSource.setPassword(password);
+        try {
+            dataSource.init();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return dataSource;
+    }
 
 }

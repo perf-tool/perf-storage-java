@@ -29,7 +29,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>perf-storage-mysql</artifactId>
+    <artifactId>perf-mysql-jdbc</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -37,14 +37,14 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.11</version>
         </dependency>
 
     </dependencies>

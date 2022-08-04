@@ -1,16 +1,3 @@
-package com.github.perftool.storage.service;
-
-
-import com.github.perftool.storage.config.StorageConfig;
-import com.github.perftool.storage.module.StorageType;
-import com.github.perftool.storage.mysql.service.MysqlBootService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.Locale;
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -29,6 +16,18 @@ import java.util.Locale;
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.perftool.storage.service;
+
+
+import com.github.perftool.storage.config.StorageConfig;
+import com.github.perftool.storage.mysql.service.MysqlBootService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.Locale;
+
 @Service
 @Slf4j
 public class BootService {
@@ -39,18 +38,13 @@ public class BootService {
 
     @Autowired
     private MysqlBootService mysqlBootService;
+
     @PostConstruct
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
         switch (storageConfig.storageType.toUpperCase(Locale.ROOT)) {
-            case "DUMMY" -> {
-                log.info("dummy middleware");
-                break;
-            }
-            case "MYSQL" -> {
-                mysqlBootService.boot();
-                break;
-            }
+            case "DUMMY" -> log.info("dummy storage");
+            case "MYSQL" -> mysqlBootService.boot();
             default -> {
             }
         }

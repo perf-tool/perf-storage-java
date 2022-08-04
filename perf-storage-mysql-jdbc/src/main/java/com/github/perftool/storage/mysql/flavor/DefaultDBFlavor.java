@@ -31,7 +31,7 @@ public class DefaultDBFlavor extends DBFlavor {
     }
 
     @Override
-    public String createInsertStatement() {
+    public String insertStatement() {
         String[] fieldKeys = mysqlConfig.fieldString.split(",");
         StringBuilder insertSql = new StringBuilder("INSERT INTO ");
         insertSql.append(mysqlConfig.tableName);
@@ -45,13 +45,13 @@ public class DefaultDBFlavor extends DBFlavor {
     }
 
     @Override
-    public String createReadStatement() {
+    public String readStatement() {
         StringBuilder readSql = new StringBuilder("SELECT * FROM " + mysqlConfig.tableName);
         return readSql.toString();
     }
 
     @Override
-    public String createDeleteStatement() {
+    public String deleteStatement() {
         StringBuilder deleteSql = new StringBuilder("DELETE FROM ");
         deleteSql.append(mysqlConfig.tableName);
         deleteSql.append(" WHERE ");
@@ -62,7 +62,7 @@ public class DefaultDBFlavor extends DBFlavor {
     }
 
     @Override
-    public String createUpdateStatement() {
+    public String updateStatement() {
         String[] fieldKeys = new String[2];
         StringBuilder update = new StringBuilder("UPDATE ");
         update.append(mysqlConfig.tableName);

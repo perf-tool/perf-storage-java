@@ -24,23 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class DBFlavor {
 
-    /**
-     * Create and return a SQL statement for inserting data.
-     */
-    public abstract String createInsertStatement() throws Exception;
 
-    /**
-     * Create and return a SQL statement for reading data.
-     */
-    public abstract String createReadStatement();
-    /**
-     * Create and return a SQL statement for deleting data.
-     */
-    public abstract String createDeleteStatement();
+    public abstract String insertStatement();
 
-    /**
-     * Create and return a SQL statement for updating data.
-     */
-    public abstract String createUpdateStatement();
+    public abstract String readStatement();
+
+    public abstract String deleteStatement();
+
+    public abstract String updateStatement();
 
 }
