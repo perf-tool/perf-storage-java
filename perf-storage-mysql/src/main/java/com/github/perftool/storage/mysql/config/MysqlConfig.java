@@ -33,22 +33,22 @@ import javax.sql.DataSource;
 @Service
 public class MysqlConfig {
 
-    @Value("${MYSQL_HOST:192.168.122.131}")
+    @Value("${MYSQL_HOST:localhost}")
     public String host;
 
     @Value("${MYSQL_PORT:3306}")
     public int port;
 
-    @Value("${MYSQL_DB_NAME:user}")
+    @Value("${MYSQL_DB_NAME}")
     public String dbName;
 
     @Value("${MYSQL_TABLE_NAME:perf_table}")
     public String tableName;
 
-    @Value("${MYSQL_TABLE_USER:root}")
+    @Value("${MYSQL_TABLE_USER}")
     public String user;
 
-    @Value("${MYSQL_PASSWORD:123456}")
+    @Value("${MYSQL_PASSWORD}")
     public String password;
 
     @Value("${MYSQL_FIELDS_STR:id,stuno,stuname,phone,idcard,addr}")
