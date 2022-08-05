@@ -31,4 +31,12 @@
 
     <artifactId>perf-storage-s3</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk-s3.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>
