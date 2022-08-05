@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.mysql.config.MysqlConfig;
@@ -33,7 +34,6 @@ import java.util.concurrent.Executors;
 @Service
 public class MysqlBootService {
 
-
     @Autowired
     private MysqlConfig mysqlConfig;
 
@@ -47,7 +47,7 @@ public class MysqlBootService {
     private void initPerfTable() {
         try (
                 Connection conn = mysqlConfig.getDataSource().getConnection();
-                Statement stmt = conn.createStatement();
+                Statement stmt = conn.createStatement()
         ) {
             stmt.execute("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " (\n"
                     + "   id int primary key auto_increment,\n"

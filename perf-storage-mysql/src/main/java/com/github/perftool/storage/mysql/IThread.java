@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.mysql;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public abstract class IThread extends Thread {
 
     private final String operationType;
     private final int delaySeconds;
-    protected final List<Integer> ids = new ArrayList();
+    protected final List<Integer> ids = new ArrayList<>();
 
     public IThread(String operationType, int delaySeconds) {
         setName("operation type - " + operationType);
@@ -36,25 +37,15 @@ public abstract class IThread extends Thread {
         this.delaySeconds = delaySeconds;
     }
 
-
     @Override
     public void run() {
         while (true) {
             switch (operationType) {
-                case "INSERT":
-                    insertData();
-                    break;
-                case "UPDATE":
-                    updateData();
-                    break;
-                case "READ":
-                    readData();
-                    break;
-                case "DELETE":
-                    deleteData();
-                    break;
-                default:
-                    log.warn("an invalid operation type");
+                case "INSERT" -> insertData();
+                case "UPDATE" -> updateData();
+                case "READ" -> readData();
+                case "DELETE" -> deleteData();
+                default -> log.warn("an invalid operation type");
             }
             try {
                 Thread.sleep(delaySeconds);

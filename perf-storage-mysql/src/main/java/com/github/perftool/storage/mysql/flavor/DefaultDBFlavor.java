@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.mysql.flavor;
 
 import com.github.perftool.storage.mysql.config.MysqlConfig;
@@ -35,19 +36,16 @@ public class DefaultDBFlavor extends DBFlavor {
         String[] fieldKeys = mysqlConfig.fieldString.split(",");
         StringBuilder insertSql = new StringBuilder("INSERT INTO ");
         insertSql.append(mysqlConfig.tableName);
-        insertSql.append(" (" + mysqlConfig.fieldString + ")");
+        insertSql.append(" (").append(mysqlConfig.fieldString).append(")");
         insertSql.append(" VALUES(?");
-        for (int i = 0; i < fieldKeys.length - 1; i++) {
-            insertSql.append(",?");
-        }
+        insertSql.append(",?".repeat(Math.max(0, fieldKeys.length - 1)));
         insertSql.append(")");
         return insertSql.toString();
     }
 
     @Override
     public String readStatement() {
-        StringBuilder readSql = new StringBuilder("SELECT * FROM " + mysqlConfig.tableName);
-        return readSql.toString();
+        return "SELECT * FROM " + mysqlConfig.tableName;
     }
 
     @Override
@@ -63,20 +61,7 @@ public class DefaultDBFlavor extends DBFlavor {
 
     @Override
     public String updateStatement() {
-        String[] fieldKeys = new String[2];
         StringBuilder update = new StringBuilder("UPDATE ");
-        update.append(mysqlConfig.tableName);
-        update.append(" SET ");
-        for (int i = 0; i < fieldKeys.length; i++) {
-            update.append(fieldKeys[i]);
-            update.append(" = ?");
-            if (i < fieldKeys.length - 1) {
-                update.append(", ");
-            }
-        }
-        update.append(" WHERE ");
-        update.append("id");
-        update.append(" = ?");
         return update.toString();
     }
 

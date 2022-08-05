@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.service;
 
 
@@ -31,7 +32,6 @@ import java.util.Locale;
 @Service
 @Slf4j
 public class BootService {
-
 
     @Autowired
     private StorageConfig storageConfig;

@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.mysql.flavor;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 public abstract class DBFlavor {
-
 
     public abstract String insertStatement();
 

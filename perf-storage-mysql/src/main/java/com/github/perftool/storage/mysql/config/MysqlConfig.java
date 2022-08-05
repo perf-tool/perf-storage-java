@@ -16,16 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.mysql.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 @Configuration
 @Component
@@ -63,17 +64,12 @@ public class MysqlConfig {
     public String operationType;
 
     public DataSource getDataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-        dataSource.setUrl(String.format("jdbc:mariadb://%s:%d/%s", host, port, dbName));
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
-        try {
-            dataSource.init();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return dataSource;
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
+        hikariConfig.setJdbcUrl(String.format("jdbc:mariadb://%s:%d/%s", host, port, dbName));
+        hikariConfig.setUsername(user);
+        hikariConfig.setPassword(password);
+        return new HikariDataSource(hikariConfig);
     }
 
 }

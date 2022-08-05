@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.mysql.IThread;
@@ -35,7 +36,6 @@ import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 public class MysqlOperations extends IThread {
-
 
     private final DefaultDBFlavor defaultDBFlavor;
     private final ConcurrentMap<String, String> cachedStatements = new ConcurrentHashMap<>();
@@ -57,7 +57,7 @@ public class MysqlOperations extends IThread {
 
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("INSERT"));
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("INSERT"))
         ) {
             int key = getRandom();
             stmt.setInt(1, key);
@@ -82,7 +82,7 @@ public class MysqlOperations extends IThread {
     public void updateData() {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("UPDATE"));
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("UPDATE"))
         ) {
             stmt.setInt(1, ids.get(0));
             int ret = stmt.executeUpdate();
@@ -100,7 +100,7 @@ public class MysqlOperations extends IThread {
     public void readData() {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("READ"));
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("READ"))
         ) {
             ResultSet resultSet = stmt.executeQuery();
             int count = 0;
@@ -117,7 +117,7 @@ public class MysqlOperations extends IThread {
     public void deleteData() {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("DELETE"));
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get("DELETE"))
         ) {
             stmt.setInt(1, ids.get(0));
             int ret = stmt.executeUpdate();
