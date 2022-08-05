@@ -20,6 +20,7 @@
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.mysql.config.MysqlConfig;
+import com.github.perftool.storage.mysql.module.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
@@ -37,12 +40,18 @@ public class MysqlBootService {
 
     public void boot() {
         this.initPerfTable();
+        String[] operationTypes = mysqlConfig.operationType.split(",");
+        for (int i = 0; i < operationTypes.length; i++) {
+            ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
+            fixedThreadPool.submit(new MysqlOperations(OperationType.valueOf(operationTypes[i]),
+                    mysqlConfig.delayOperationSeconds, mysqlConfig));
+        }
     }
 
     private void initPerfTable() {
         try (
                 Connection conn = mysqlConfig.getDataSource().getConnection();
-                Statement stmt = conn.createStatement()
+                Statement stmt = conn.createStatement();
         ) {
             stmt.execute("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " (\n"
                     + "   id int primary key auto_increment,\n"
