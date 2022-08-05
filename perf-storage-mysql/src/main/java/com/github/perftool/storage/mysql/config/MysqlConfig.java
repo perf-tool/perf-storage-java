@@ -39,17 +39,29 @@ public class MysqlConfig {
     @Value("${MYSQL_PORT:3306}")
     public int port;
 
-    @Value("${MYSQL_DB_NAME}")
+    @Value("${MYSQL_DB_NAME:}")
     public String dbName;
 
     @Value("${MYSQL_TABLE_NAME:perf_table}")
     public String tableName;
 
-    @Value("${MYSQL_TABLE_USER}")
+    @Value("${MYSQL_TABLE_USER:}")
     public String user;
 
-    @Value("${MYSQL_PASSWORD}")
+    @Value("${MYSQL_PASSWORD:}")
     public String password;
+
+    @Value("${MYSQL_FIELDS_STR:id,stuno,stuname,phone,idcard,addr}")
+    public String fieldString;
+
+    @Value("${FIXED_THREAD_NUM:1}")
+    public int fixedThreadNum;
+
+    @Value("${DELAY_OPERATION_SECONDS:0}")
+    public int delayOperationSeconds;
+
+    @Value("${OPERATION_TYPE:DELETE,INSERT}")
+    public String operationType;
 
     public DataSource getDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
