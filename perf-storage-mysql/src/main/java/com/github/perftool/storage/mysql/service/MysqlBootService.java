@@ -39,9 +39,6 @@ public class MysqlBootService {
 
     public void boot() {
         this.initPerfTable();
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
-        fixedThreadPool.submit(new MysqlOperations(mysqlConfig.operationType,
-                mysqlConfig.delayOperationSeconds, mysqlConfig));
     }
 
     private void initPerfTable() {

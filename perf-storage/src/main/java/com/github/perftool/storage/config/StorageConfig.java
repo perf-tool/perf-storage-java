@@ -19,6 +19,7 @@
 
 package com.github.perftool.storage.config;
 
+import com.github.perftool.storage.module.StorageType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,6 @@ import org.springframework.stereotype.Component;
 public class StorageConfig {
 
     @Value("${STORAGE_TYPE:DUMMY}")
-    public String storageType;
+    public StorageType storageType;
 
 }

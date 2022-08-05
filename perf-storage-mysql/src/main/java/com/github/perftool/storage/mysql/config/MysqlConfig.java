@@ -51,18 +51,6 @@ public class MysqlConfig {
     @Value("${MYSQL_PASSWORD}")
     public String password;
 
-    @Value("${MYSQL_FIELDS_STR:id,stuno,stuname,phone,idcard,addr}")
-    public String fieldString;
-
-    @Value("${FIXED_THREAD_NUM:1}")
-    public int fixedThreadNum;
-
-    @Value("${DELAY_OPERATION_SECONDS:0}")
-    public int delayOperationSeconds;
-
-    @Value("${OPERATION_TYPE:INSERT}")
-    public String operationType;
-
     public DataSource getDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");

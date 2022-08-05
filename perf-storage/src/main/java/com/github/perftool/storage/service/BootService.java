@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Locale;
 
 @Service
 @Slf4j
@@ -42,9 +41,9 @@ public class BootService {
     @PostConstruct
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
-        switch (storageConfig.storageType.toUpperCase(Locale.ROOT)) {
-            case "DUMMY" -> log.info("dummy storage");
-            case "MYSQL" -> mysqlBootService.boot();
+        switch (storageConfig.storageType) {
+            case DUMMY -> log.info("dummy storage");
+            case MYSQL -> mysqlBootService.boot();
             default -> {
             }
         }
