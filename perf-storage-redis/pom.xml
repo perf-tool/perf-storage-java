@@ -31,4 +31,11 @@
 
     <artifactId>perf-storage-redis</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

@@ -49,7 +49,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- dependency -->
         <annotations.version>23.0.0</annotations.version>
+        <aws-java-sdk-s3.version>1.12.275</aws-java-sdk-s3.version>
+        <cassandra.version>3.11.2</cassandra.version>
         <HikariCP.version>5.0.1</HikariCP.version>
+        <zookeeper.version>3.8.0</zookeeper.version>
         <!-- plugin -->
         <checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
         <compiler-plugin.version>3.10.1</compiler-plugin.version>
