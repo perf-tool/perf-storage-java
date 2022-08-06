@@ -49,10 +49,12 @@ public abstract class IThread extends Thread {
                 case DELETE -> deleteData();
                 default -> log.warn("an invalid operation type");
             }
-            try {
-                Thread.sleep(delaySeconds);
-            } catch (InterruptedException e) {
-                log.error("unexpected exception ", e);
+            if (delaySeconds != 0) {
+                try {
+                    Thread.sleep(delaySeconds);
+                } catch (InterruptedException e) {
+                    log.error("unexpected exception ", e);
+                }
             }
         }
     }
