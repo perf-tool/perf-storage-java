@@ -64,7 +64,9 @@ public class MysqlConfig {
     public DataSource getDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
-        hikariConfig.setJdbcUrl(String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true", host, port, dbName, user, password));
+        String jdbcUrl = String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true",
+                host, port, dbName, user, password);
+        hikariConfig.setJdbcUrl(jdbcUrl);
         return new HikariDataSource(hikariConfig);
     }
 
