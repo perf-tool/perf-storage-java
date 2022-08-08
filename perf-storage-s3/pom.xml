@@ -33,6 +33,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.perftool</groupId>
+            <artifactId>perf-storage-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>${aws-java-sdk-s3.version}</version>

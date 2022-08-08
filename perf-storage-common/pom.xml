@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -28,20 +27,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>perf-storage-zookeeper</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.perftool</groupId>
-            <artifactId>perf-storage-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-            <version>${zookeeper.version}</version>
-        </dependency>
-    </dependencies>
+    <artifactId>perf-storage-common</artifactId>
 
 </project>

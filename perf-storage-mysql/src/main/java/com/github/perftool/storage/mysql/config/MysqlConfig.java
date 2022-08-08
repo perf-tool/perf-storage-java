@@ -24,13 +24,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 
 @Configuration
 @Component
-@Service
 public class MysqlConfig {
 
     @Value("${MYSQL_HOST:localhost}")
@@ -66,9 +64,7 @@ public class MysqlConfig {
     public DataSource getDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
-        hikariConfig.setJdbcUrl(String.format("jdbc:mariadb://%s:%d/%s", host, port, dbName));
-        hikariConfig.setUsername(user);
-        hikariConfig.setPassword(password);
+        hikariConfig.setJdbcUrl(String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true", host, port, dbName, user, password));
         return new HikariDataSource(hikariConfig);
     }
 
