@@ -19,8 +19,8 @@
 
 package com.github.perftool.storage.mysql.service;
 
+import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
-import com.github.perftool.storage.mysql.module.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

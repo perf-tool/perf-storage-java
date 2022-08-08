@@ -19,10 +19,10 @@
 
 package com.github.perftool.storage.mysql.service;
 
-import com.github.perftool.storage.mysql.IThread;
+import com.github.perftool.storage.common.IThread;
+import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.github.perftool.storage.mysql.flavor.DefaultDBFlavor;
-import com.github.perftool.storage.mysql.module.OperationType;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;

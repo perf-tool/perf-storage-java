@@ -17,14 +17,4 @@
  * under the License.
  */
 
-package com.github.perftool.storage.module;
-
-public enum StorageType {
-
-    CASSANDRA,
-    MYSQL,
-    REDIS,
-    S3,
-    ZOOKEEPER,
-    DUMMY
-}
+package com.github.perftool.storage.common;

@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package com.github.perftool.storage.mysql;
+package com.github.perftool.storage.common;
 
-import com.github.perftool.storage.mysql.module.OperationType;
+import com.github.perftool.storage.common.module.OperationType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

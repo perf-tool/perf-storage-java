@@ -33,6 +33,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.perftool</groupId>
+            <artifactId>perf-storage-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
             <version>${cassandra.version}</version>
