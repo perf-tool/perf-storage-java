@@ -21,10 +21,13 @@ package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,18 +42,28 @@ public class MysqlBootService {
     private MysqlConfig mysqlConfig;
 
     public void boot() {
-        this.initPerfTable();
+        DataSource dataSource = createDatasource(mysqlConfig);
+        this.initPerfTable(dataSource);
         String[] operationTypes = mysqlConfig.operationType.split(",");
-        for (int i = 0; i < operationTypes.length; i++) {
+        for (String operationType : operationTypes) {
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
-            fixedThreadPool.submit(new MysqlOperations(OperationType.valueOf(operationTypes[i]),
-                    mysqlConfig.delayOperationSeconds, mysqlConfig));
+            fixedThreadPool.submit(new MysqlOperations(OperationType.valueOf(operationType),
+                    mysqlConfig.delayOperationSeconds, dataSource, mysqlConfig));
         }
     }
 
-    private void initPerfTable() {
+    public DataSource createDatasource(MysqlConfig conf) {
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
+        String jdbcUrl = String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true",
+                conf.host, conf.port, conf.dbName, conf.user, conf.password);
+        hikariConfig.setJdbcUrl(jdbcUrl);
+        return new HikariDataSource(hikariConfig);
+    }
+
+    private void initPerfTable(DataSource dataSource) {
         try (
-                Connection conn = mysqlConfig.getDataSource().getConnection();
+                Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement();
         ) {
             stmt.execute("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " (\n"

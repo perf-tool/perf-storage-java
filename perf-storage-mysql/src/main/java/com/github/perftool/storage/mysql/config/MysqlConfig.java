@@ -19,13 +19,9 @@
 
 package com.github.perftool.storage.mysql.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
-import javax.sql.DataSource;
 
 @Configuration
 @Component
@@ -60,14 +56,5 @@ public class MysqlConfig {
 
     @Value("${OPERATION_TYPE:DELETE,INSERT}")
     public String operationType;
-
-    public DataSource getDataSource() {
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
-        String jdbcUrl = String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true",
-                host, port, dbName, user, password);
-        hikariConfig.setJdbcUrl(jdbcUrl);
-        return new HikariDataSource(hikariConfig);
-    }
 
 }

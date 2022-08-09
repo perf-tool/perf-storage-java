@@ -36,7 +36,7 @@ public class DefaultDBFlavor extends DBFlavor {
         String[] fieldKeys = mysqlConfig.fieldString.split(",");
         StringBuilder insertSql = new StringBuilder("INSERT INTO ");
         insertSql.append(mysqlConfig.tableName);
-        insertSql.append(" (" + mysqlConfig.fieldString + ")");
+        insertSql.append(" (").append(mysqlConfig.fieldString).append(")");
         insertSql.append(" VALUES(?");
         for (int i = 0; i < fieldKeys.length - 1; i++) {
             insertSql.append(",?");
@@ -47,8 +47,7 @@ public class DefaultDBFlavor extends DBFlavor {
 
     @Override
     public String readStatement() {
-        StringBuilder readSql = new StringBuilder("SELECT * FROM " + mysqlConfig.tableName);
-        return readSql.toString();
+        return "SELECT * FROM " + mysqlConfig.tableName;
     }
 
     @Override
