@@ -40,15 +40,15 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class MysqlOperations extends IThread {
 
-
     private final DefaultDBFlavor defaultDBFlavor;
     private final ConcurrentMap<OperationType, String> cachedStatements = new ConcurrentHashMap<>();
     private final DataSource dataSource;
     private final SecureRandom random = new SecureRandom();
 
-    public MysqlOperations(OperationType operationType, int delaySeconds, MysqlConfig mysqlConfig) {
+    public MysqlOperations(OperationType operationType, int delaySeconds,
+                           DataSource dataSource, MysqlConfig mysqlConfig) {
         super(operationType, delaySeconds);
-        this.dataSource = mysqlConfig.getDataSource();
+        this.dataSource = dataSource;
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         cachedStatements.putIfAbsent(OperationType.INSERT, defaultDBFlavor.insertStatement());
         cachedStatements.putIfAbsent(OperationType.UPDATE, defaultDBFlavor.updateStatement());

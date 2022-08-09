@@ -28,6 +28,10 @@
     <!-- pattern sort by alpha -->
 
     <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <Match>
         <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
     </Match>
 
