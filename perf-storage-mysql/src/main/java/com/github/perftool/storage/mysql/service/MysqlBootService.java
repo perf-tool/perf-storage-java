@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -51,8 +51,11 @@ public class MysqlBootService {
         String[] operationTypes = mysqlConfig.operationType.split(",");
         for (String operationType : operationTypes) {
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
-            fixedThreadPool.submit(new MysqlOperations(OperationType.valueOf(operationType),
-                    mysqlConfig.delayOperationSeconds, dataSource, mysqlConfig, ids));
+            MysqlOperations mysqlOperations = new MysqlOperations(OperationType.valueOf(operationType),
+                    mysqlConfig.delayOperationSeconds, dataSource, mysqlConfig, ids);
+            for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
+                fixedThreadPool.submit(mysqlOperations);
+            }
         }
     }
 
@@ -70,14 +73,14 @@ public class MysqlBootService {
                 Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement();
         ) {
-            stmt.execute("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " (\n"
-                    + "   id int primary key auto_increment,\n"
-                    + "   stuno int not null unique,\n"
-                    + "   stuname varchar(50) not null,\n"
-                    + "   phone varchar(100),\n"
-                    + "   idcard varchar(255),\n"
-                    + "   addr varchar(255)\n"
-                    + "   )");
+            StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " ( ");
+            sql.append("id varchar(" + mysqlConfig.fieldLength + ") primary key , ");
+            for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
+                sql.append("field" + i + " varchar(" + mysqlConfig.fieldLength + "),");
+            }
+            sql.append("field" + (mysqlConfig.fieldCount - 1) + " varchar(" + mysqlConfig.fieldLength + ") ");
+            sql.append(" )");
+            stmt.execute(sql.toString());
         } catch (SQLException e) {
             log.error("create table fail. {}", mysqlConfig.tableName, e);
         }

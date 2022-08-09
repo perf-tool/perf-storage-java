@@ -32,7 +32,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -44,11 +46,14 @@ public class MysqlOperations extends IThread {
     private final ConcurrentMap<OperationType, String> cachedStatements = new ConcurrentHashMap<>();
     private final DataSource dataSource;
     private final SecureRandom random = new SecureRandom();
+    private final MysqlConfig mysqlConfig;
+    private List<String> ids = Collections.synchronizedList(new ArrayList<>());
 
     public MysqlOperations(OperationType operationType, int delaySeconds,
                            DataSource dataSource, MysqlConfig mysqlConfig, List<Integer> ids) {
-        super(operationType, delaySeconds, ids);
+        super(operationType, delaySeconds);
         this.dataSource = dataSource;
+        this.mysqlConfig = mysqlConfig;
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         cachedStatements.putIfAbsent(OperationType.INSERT, defaultDBFlavor.insertStatement());
         cachedStatements.putIfAbsent(OperationType.UPDATE, defaultDBFlavor.updateStatement());
@@ -62,16 +67,13 @@ public class MysqlOperations extends IThread {
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.INSERT))
         ) {
-            int key = getRandom();
-            stmt.setInt(1, key);
-            stmt.setInt(2, getRandom());
-            stmt.setString(3, "zs");
-            stmt.setString(4, getRandom() + "");
-            stmt.setString(5, getRandom() + "");
-            stmt.setString(6, "addr");
+            String id = UUID.randomUUID().toString().replaceAll("-", "");
+            stmt.setString(1, id);
+            for (int i = 2; i <= mysqlConfig.fieldCount; i++) {
+                stmt.setString(i, getRandom() + "");
+            }
             int result = stmt.executeUpdate();
             if (result == 1) {
-                ids.add(key);
                 log.info("insert success.");
             } else {
                 log.error("insert fail.");
@@ -92,9 +94,11 @@ public class MysqlOperations extends IThread {
                 log.info("size is zero");
                 return;
             }
-            stmt.setInt(1, getRandom());
-            stmt.setString(2, getRandom() + "");
-            stmt.setInt(3, ids.get(0));
+            log.info("the ids : {}", ids);
+            for (int i = 1; i <= mysqlConfig.updateFieldCount; i++) {
+                stmt.setString(i, "update-" + getRandom());
+            }
+            stmt.setString(mysqlConfig.updateFieldCount + 1, ids.get(0));
             int ret = stmt.executeUpdate();
             if (ret == 1) {
                 log.info("update success.");
@@ -136,7 +140,7 @@ public class MysqlOperations extends IThread {
                 log.info("size is zero");
                 return;
             }
-            stmt.setInt(1, ids.get(0));
+            stmt.setString(1, ids.get(0));
             int ret = stmt.executeUpdate();
             if (ret == 1) {
                 log.info("delete success.");
@@ -153,16 +157,15 @@ public class MysqlOperations extends IThread {
         return random.nextInt();
     }
 
-    private List<Integer> readAllID() {
-        List<Integer> ids = new ArrayList<>();
+    private List<String> readAllID() {
+        List<String> ids = new ArrayList<>();
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.READ))
         ) {
             ResultSet resultSet = stmt.executeQuery();
-
             while (resultSet.next()) {
-                ids.add(resultSet.getInt("id"));
+                ids.add(resultSet.getString("id"));
             }
         } catch (SQLException e) {
             log.error("read data fail. ", e);
