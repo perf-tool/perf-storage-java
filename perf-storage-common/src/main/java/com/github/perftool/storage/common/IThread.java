@@ -22,7 +22,6 @@ package com.github.perftool.storage.common;
 import com.github.perftool.storage.common.module.OperationType;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,31 +29,30 @@ public abstract class IThread extends Thread {
 
     private final OperationType operationType;
     private final int delaySeconds;
-    protected List<Integer> ids = new ArrayList<>();
+    protected List<Integer> ids;
 
-    public IThread(OperationType operationType, int delaySeconds) {
+    public IThread(OperationType operationType, int delaySeconds, List<Integer> ids) {
         setName("operation type - " + operationType);
         this.operationType = operationType;
         this.delaySeconds = delaySeconds;
+        this.ids = ids;
     }
 
 
     @Override
     public void run() {
-        while (true) {
-            switch (operationType) {
-                case INSERT -> insertData();
-                case UPDATE -> updateData();
-                case READ -> readData();
-                case DELETE -> deleteData();
-                default -> log.warn("an invalid operation type");
-            }
-            if (delaySeconds != 0) {
-                try {
-                    Thread.sleep(delaySeconds);
-                } catch (InterruptedException e) {
-                    log.error("unexpected exception ", e);
-                }
+        switch (operationType) {
+            case INSERT -> insertData();
+            case UPDATE -> updateData();
+            case READ -> readData();
+            case DELETE -> deleteData();
+            default -> log.warn("an invalid operation type");
+        }
+        if (delaySeconds != 0) {
+            try {
+                Thread.sleep(delaySeconds);
+            } catch (InterruptedException e) {
+                log.error("unexpected exception ", e);
             }
         }
     }

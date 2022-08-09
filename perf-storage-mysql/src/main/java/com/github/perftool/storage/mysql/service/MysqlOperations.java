@@ -46,8 +46,8 @@ public class MysqlOperations extends IThread {
     private final SecureRandom random = new SecureRandom();
 
     public MysqlOperations(OperationType operationType, int delaySeconds,
-                           DataSource dataSource, MysqlConfig mysqlConfig) {
-        super(operationType, delaySeconds);
+                           DataSource dataSource, MysqlConfig mysqlConfig, List<Integer> ids) {
+        super(operationType, delaySeconds, ids);
         this.dataSource = dataSource;
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         cachedStatements.putIfAbsent(OperationType.INSERT, defaultDBFlavor.insertStatement());

@@ -31,6 +31,9 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,6 +43,7 @@ public class MysqlBootService {
 
     @Autowired
     private MysqlConfig mysqlConfig;
+    public List<Integer> ids = Collections.synchronizedList(new ArrayList<>());
 
     public void boot() {
         DataSource dataSource = createDatasource(mysqlConfig);
@@ -48,7 +52,7 @@ public class MysqlBootService {
         for (String operationType : operationTypes) {
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
             fixedThreadPool.submit(new MysqlOperations(OperationType.valueOf(operationType),
-                    mysqlConfig.delayOperationSeconds, dataSource, mysqlConfig));
+                    mysqlConfig.delayOperationSeconds, dataSource, mysqlConfig, ids));
         }
     }
 
