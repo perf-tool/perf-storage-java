@@ -17,24 +17,24 @@
  * under the License.
  */
 
-package com.github.perftool.storage.common.config;
+package com.github.perftool.storage.common.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-@Configuration
-@Component
-public class CommonConfig {
+public class IDUtils {
 
-    @Value("${DATA_SET_SIZE:10000}")
-    public int dataSetSize;
+    public static List<String> getTargetIds(int presetDataSize) {
+        List<String> ids = new ArrayList<>();
+        for (int i = 0; i < presetDataSize; i++) {
+            ids.add(getTargetId());
+        }
+        return ids;
+    }
 
-    @Value("${READ_RATE_PERCENT:0.25}")
-    public double readRatePercent;
-
-    @Value("${UPDATE_RATE_PERCENT:0.75}")
-    public double updateRatePercent;
-
+    public static String getTargetId() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 
 }

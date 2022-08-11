@@ -19,13 +19,14 @@
 
 package com.github.perftool.storage.mysql.config;
 
+import com.github.perftool.storage.common.config.CommonConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Configuration
 @Component
-public class MysqlConfig {
+public class MysqlConfig extends CommonConfig {
 
     @Value("${MYSQL_HOST:localhost}")
     public String host;
@@ -45,16 +46,16 @@ public class MysqlConfig {
     @Value("${MYSQL_PASSWORD:}")
     public String password;
 
-    @Value("${MYSQL_FIELDS_STR:id,stuno,stuname,phone,idcard,addr}")
-    public String fieldString;
+    @Value("${MYSQL_FIELDS_COUNT:10}")
+    public int fieldCount;
 
-    @Value("${FIXED_THREAD_NUM:1}")
+    @Value("${MYSQL_UPDATE_FIELDS_COUNT:1}")
+    public int updateFieldCount;
+
+    @Value("${FIXED_THREAD_NUM:10}")
     public int fixedThreadNum;
 
-    @Value("${DELAY_OPERATION_SECONDS:0}")
-    public int delayOperationSeconds;
-
-    @Value("${OPERATION_TYPE:DELETE,INSERT}")
-    public String operationType;
+    @Value("${FIELD_LENGTH:100}")
+    public String fieldLength;
 
 }

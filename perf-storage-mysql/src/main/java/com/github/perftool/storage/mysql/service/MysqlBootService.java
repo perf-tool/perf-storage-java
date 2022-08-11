@@ -19,7 +19,7 @@
 
 package com.github.perftool.storage.mysql.service;
 
-import com.github.perftool.storage.common.module.OperationType;
+import com.github.perftool.storage.common.utils.IDUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,21 +43,21 @@ public class MysqlBootService {
     private MysqlConfig mysqlConfig;
 
     public void boot() {
-        DataSource dataSource = createDatasource(mysqlConfig);
+        List<String> ids = IDUtils.getTargetIds(mysqlConfig.dataSetSize);
+        DataSource dataSource = createDatasource();
         this.initPerfTable(dataSource);
-        String[] operationTypes = mysqlConfig.operationType.split(",");
-        for (String operationType : operationTypes) {
-            ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
-            fixedThreadPool.submit(new MysqlOperations(OperationType.valueOf(operationType),
-                    mysqlConfig.delayOperationSeconds, dataSource, mysqlConfig));
+        this.initData(new MysqlOperations(dataSource, mysqlConfig, ids));
+        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
+        for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
+            fixedThreadPool.execute(new MysqlOperations(dataSource, mysqlConfig, ids));
         }
     }
 
-    public DataSource createDatasource(MysqlConfig conf) {
+    public DataSource createDatasource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
         String jdbcUrl = String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true",
-                conf.host, conf.port, conf.dbName, conf.user, conf.password);
+                mysqlConfig.host, mysqlConfig.port, mysqlConfig.dbName, mysqlConfig.user, mysqlConfig.password);
         hikariConfig.setJdbcUrl(jdbcUrl);
         return new HikariDataSource(hikariConfig);
     }
@@ -66,17 +67,21 @@ public class MysqlBootService {
                 Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement();
         ) {
-            stmt.execute("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " (\n"
-                    + "   id int primary key auto_increment,\n"
-                    + "   stuno int not null unique,\n"
-                    + "   stuname varchar(50) not null,\n"
-                    + "   phone varchar(100),\n"
-                    + "   idcard varchar(255),\n"
-                    + "   addr varchar(255)\n"
-                    + "   )");
+            StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " ( ");
+            sql.append("id varchar(" + mysqlConfig.fieldLength + ") primary key , ");
+            for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
+                sql.append("field" + i + " varchar(" + mysqlConfig.fieldLength + "),");
+            }
+            sql.append("field" + (mysqlConfig.fieldCount - 1) + " varchar(" + mysqlConfig.fieldLength + ") ");
+            sql.append(" )");
+            stmt.execute(sql.toString());
         } catch (SQLException e) {
             log.error("create table fail. {}", mysqlConfig.tableName, e);
         }
+    }
+
+    private void initData(MysqlOperations mysqlOperations) {
+        mysqlOperations.ids.forEach(mysqlOperations::insertData);
     }
 
 }

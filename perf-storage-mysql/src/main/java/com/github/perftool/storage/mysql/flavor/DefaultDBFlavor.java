@@ -33,12 +33,15 @@ public class DefaultDBFlavor extends DBFlavor {
 
     @Override
     public String insertStatement() {
-        String[] fieldKeys = mysqlConfig.fieldString.split(",");
         StringBuilder insertSql = new StringBuilder("INSERT INTO ");
         insertSql.append(mysqlConfig.tableName);
-        insertSql.append(" (").append(mysqlConfig.fieldString).append(")");
+        insertSql.append(" (id,");
+        for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
+            insertSql.append("field" + i + ", ");
+        }
+        insertSql.append("field" + (mysqlConfig.fieldCount - 1) + ")");
         insertSql.append(" VALUES(?");
-        for (int i = 0; i < fieldKeys.length - 1; i++) {
+        for (int i = 1; i < mysqlConfig.fieldCount; i++) {
             insertSql.append(",?");
         }
         insertSql.append(")");
@@ -47,7 +50,7 @@ public class DefaultDBFlavor extends DBFlavor {
 
     @Override
     public String readStatement() {
-        return "SELECT * FROM " + mysqlConfig.tableName;
+        return "SELECT * FROM " + mysqlConfig.tableName + " where id = ?";
     }
 
     @Override
@@ -63,19 +66,13 @@ public class DefaultDBFlavor extends DBFlavor {
 
     @Override
     public String updateStatement() {
-        String[] fieldKeys = new String[2];
-        fieldKeys[0] = "stuname";
-        fieldKeys[1] = "phone";
         StringBuilder update = new StringBuilder("UPDATE ");
         update.append(mysqlConfig.tableName);
         update.append(" SET ");
-        for (int i = 0; i < fieldKeys.length; i++) {
-            update.append(fieldKeys[i]);
-            update.append(" = ?");
-            if (i < fieldKeys.length - 1) {
-                update.append(", ");
-            }
+        for (int i = 1; i < mysqlConfig.updateFieldCount; i++) {
+            update.append("field" + i + " = ?, ");
         }
+        update.append("field" + mysqlConfig.updateFieldCount + " = ?");
         update.append(" WHERE ");
         update.append("id");
         update.append(" = ?");
