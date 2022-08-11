@@ -27,6 +27,7 @@
         <module>perf-storage</module>
         <module>perf-storage-cassandra</module>
         <module>perf-storage-common</module>
+        <module>perf-storage-etcd</module>
         <module>perf-storage-mysql</module>
         <module>perf-storage-redis</module>
         <module>perf-storage-s3</module>
@@ -53,6 +54,7 @@
         <aws-java-sdk-s3.version>1.12.278</aws-java-sdk-s3.version>
         <cassandra.version>3.11.2</cassandra.version>
         <HikariCP.version>5.0.1</HikariCP.version>
+        <jetcd.version>0.7.3</jetcd.version>
         <zookeeper.version>3.8.0</zookeeper.version>
         <!-- plugin -->
         <checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
