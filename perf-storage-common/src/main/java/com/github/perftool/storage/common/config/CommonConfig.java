@@ -35,6 +35,4 @@ public class CommonConfig {
 
     @Value("${UPDATE_RATE_PERCENT:0.75}")
     public double updateRatePercent;
-
-
 }
