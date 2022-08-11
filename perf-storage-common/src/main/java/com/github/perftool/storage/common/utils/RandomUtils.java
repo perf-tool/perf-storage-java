@@ -17,22 +17,23 @@
  * under the License.
  */
 
-package com.github.perftool.storage.common.config;
+package com.github.perftool.storage.common.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import java.util.Random;
 
-@Configuration
-@Component
-public class CommonConfig {
+public class RandomUtils {
 
-    @Value("${DATA_SET_SIZE:10000}")
-    public int dataSetSize;
+    private static final Random random = new Random();
 
-    @Value("${READ_RATE_PERCENT:0.25}")
-    public double readRatePercent;
+    public static double randomPercentage() {
+        return random.nextDouble(1);
+    }
 
-    @Value("${UPDATE_RATE_PERCENT:0.75}")
-    public double updateRatePercent;
+    public static int random() {
+        return random.nextInt();
+    }
+
+    public static int randomElem(int listSize) {
+        return random.nextInt(listSize);
+    }
 }

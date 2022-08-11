@@ -17,22 +17,19 @@
  * under the License.
  */
 
-package com.github.perftool.storage.common.config;
+package com.github.perftool.storage.common;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
-@Configuration
-@Component
-public class CommonConfig {
+@Slf4j
+public abstract class StorageThread extends Thread {
 
-    @Value("${DATA_SET_SIZE:10000}")
-    public int dataSetSize;
+    public abstract void insertData(String id);
 
-    @Value("${READ_RATE_PERCENT:0.25}")
-    public double readRatePercent;
+    public abstract void updateData(String id);
 
-    @Value("${UPDATE_RATE_PERCENT:0.75}")
-    public double updateRatePercent;
+    public abstract void readData(String id);
+
+    public abstract void deleteData(String id);
+
 }
