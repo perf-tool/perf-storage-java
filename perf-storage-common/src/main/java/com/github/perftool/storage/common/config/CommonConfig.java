@@ -38,4 +38,10 @@ public class CommonConfig {
 
     @Value("${UPDATE_RATE_PERCENT:0.75}")
     public double updateRatePercent;
+
+    @Value("${STORAGE_RATE_LIMITER}")
+    public int rateLimiter;
+
+    @Value("${RATE_LIMIT_TIMEOUT_SECONDS:2}")
+    public int rateLimitTimeoutSeconds;
 }

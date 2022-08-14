@@ -59,6 +59,7 @@ public class MysqlBootService {
         String jdbcUrl = String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true",
                 mysqlConfig.host, mysqlConfig.port, mysqlConfig.dbName, mysqlConfig.user, mysqlConfig.password);
         hikariConfig.setJdbcUrl(jdbcUrl);
+        hikariConfig.setMaximumPoolSize(mysqlConfig.maximumPoolSize);
         return new HikariDataSource(hikariConfig);
     }
 
@@ -81,7 +82,7 @@ public class MysqlBootService {
     }
 
     private void initData(MysqlOperations mysqlOperations) {
-        mysqlOperations.ids.forEach(mysqlOperations::insertData);
+        mysqlOperations.initIds.forEach(mysqlOperations::insertData);
     }
 
 }

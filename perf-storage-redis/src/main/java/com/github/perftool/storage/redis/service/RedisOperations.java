@@ -33,20 +33,11 @@ public class RedisOperations extends StorageThread {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisConfig redisConfig;
-    private final List<String> ids;
 
     public RedisOperations(List<String> ids, RedisConfig redisConfig, RedisTemplate<String, Object> redisTemplate) {
-        this.ids = ids;
+        super(redisConfig.rateLimiter, redisConfig.rateLimitTimeoutSeconds, ids);
         this.redisConfig = redisConfig;
         this.redisTemplate = redisTemplate;
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            this.updateData(ids.get(RandomUtils.randomElem(ids.size())));
-            this.readData(ids.get(RandomUtils.randomElem(ids.size())));
-        }
     }
 
     @Override
