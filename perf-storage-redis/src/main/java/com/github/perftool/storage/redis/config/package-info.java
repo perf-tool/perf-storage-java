@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -17,25 +17,4 @@
  * under the License.
  */
 
-package com.github.perftool.storage.common.config;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
-@Configuration
-@Component
-public class CommonConfig {
-
-    @Value("${DATA_SET_SIZE:10000}")
-    public int dataSetSize;
-
-    @Value("${FIXED_THREAD_NUM:10}")
-    public int fixedThreadNum;
-
-    @Value("${READ_RATE_PERCENT:0.25}")
-    public double readRatePercent;
-
-    @Value("${UPDATE_RATE_PERCENT:0.75}")
-    public double updateRatePercent;
-}
+package com.github.perftool.storage.redis.config;

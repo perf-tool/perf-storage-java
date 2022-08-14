@@ -17,25 +17,42 @@
  * under the License.
  */
 
-package com.github.perftool.storage.common.config;
+package com.github.perftool.storage.redis.config;
 
+import com.github.perftool.storage.common.config.CommonConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Configuration
 @Component
-public class CommonConfig {
+public class RedisConfig extends CommonConfig {
 
-    @Value("${DATA_SET_SIZE:10000}")
-    public int dataSetSize;
+    @Value("${REDIS_DATABASE:0}")
+    public int database;
 
-    @Value("${FIXED_THREAD_NUM:10}")
-    public int fixedThreadNum;
+    @Value("${REDIS_HOST:localhost}")
+    public String host;
 
-    @Value("${READ_RATE_PERCENT:0.25}")
-    public double readRatePercent;
+    @Value("${REDIS_PASSWORD:}")
+    public String password;
 
-    @Value("${UPDATE_RATE_PERCENT:0.75}")
-    public double updateRatePercent;
+    @Value("${REDIS_PORT:6379}")
+    public int port;
+
+    @Value("${REDIS_TIMEOUT:5000}")
+    public long timeout;
+
+    @Value("${LETTUCE_SHUTDOWN_TIMEOUT_SECONDS:100}")
+    public long shutDownTimeout;
+
+    @Value("${LETTUCE_POOL_MAX_IDLE:10}")
+    public int maxIdle;
+
+    @Value("${LETTUCE_POOL_MIN_IDLE:5}")
+    public int minIdle;
+
+    @Value("${LETTUCE_POOL_MAX_ACTIVE:-1}")
+    public int maxActive;
+
 }

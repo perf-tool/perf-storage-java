@@ -52,9 +52,6 @@ public class MysqlConfig extends CommonConfig {
     @Value("${MYSQL_UPDATE_FIELDS_COUNT:1}")
     public int updateFieldCount;
 
-    @Value("${FIXED_THREAD_NUM:10}")
-    public int fixedThreadNum;
-
     @Value("${FIELD_LENGTH:100}")
     public String fieldLength;
 
