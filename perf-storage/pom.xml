@@ -35,27 +35,27 @@
         <dependency>
             <groupId>com.github.perftool</groupId>
             <artifactId>perf-storage-cassandra</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.perftool</groupId>
             <artifactId>perf-storage-mysql</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.perftool</groupId>
             <artifactId>perf-storage-redis</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.perftool</groupId>
             <artifactId>perf-storage-s3</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.perftool</groupId>
             <artifactId>perf-storage-zookeeper</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
