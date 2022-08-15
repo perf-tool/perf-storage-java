@@ -38,32 +38,21 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class MysqlOperations extends StorageThread {
 
-    private final DefaultDBFlavor defaultDBFlavor;
     private final ConcurrentMap<OperationType, String> cachedStatements = new ConcurrentHashMap<>();
+    private final DefaultDBFlavor defaultDBFlavor;
+    private final MysqlConfig mysqlConfig;
     private final DataSource dataSource;
-    private MysqlConfig mysqlConfig;
-    public List<String> ids;
-
 
     public MysqlOperations(DataSource dataSource, MysqlConfig mysqlConfig, List<String> ids) {
-        this.dataSource = dataSource;
-        this.mysqlConfig = mysqlConfig;
+        super(mysqlConfig.threadRateLimit, mysqlConfig.threadRateLimitTimeoutMs, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
-        this.ids = ids;
+        this.mysqlConfig = mysqlConfig;
+        this.dataSource = dataSource;
         cachedStatements.putIfAbsent(OperationType.INSERT, defaultDBFlavor.insertStatement());
         cachedStatements.putIfAbsent(OperationType.UPDATE, defaultDBFlavor.updateStatement());
         cachedStatements.putIfAbsent(OperationType.READ, defaultDBFlavor.readStatement());
         cachedStatements.putIfAbsent(OperationType.DELETE, defaultDBFlavor.deleteStatement());
     }
-
-    @Override
-    public void run() {
-        while (true) {
-            this.readData(ids.get(RandomUtils.randomElem(ids.size())));
-            this.updateData(ids.get(RandomUtils.randomElem(ids.size())));
-        }
-    }
-
 
     @Override
     public void insertData(String id) {
@@ -75,13 +64,7 @@ public class MysqlOperations extends StorageThread {
             for (int i = 2; i <= mysqlConfig.fieldCount; i++) {
                 stmt.setString(i, RandomUtils.random() + "");
             }
-
-            int result = stmt.executeUpdate();
-            if (result == 1) {
-                log.info("insert success.");
-            } else {
-                log.error("insert fail.");
-            }
+            stmt.executeUpdate();
         } catch (SQLException e) {
             log.error("insert data fail. ", e);
         }
@@ -100,12 +83,7 @@ public class MysqlOperations extends StorageThread {
                 stmt.setString(i, RandomUtils.random() + "");
             }
             stmt.setString(mysqlConfig.updateFieldCount + 1, id);
-            int ret = stmt.executeUpdate();
-            if (ret == 1) {
-                log.info("update success.");
-            } else {
-                log.error("update fail.");
-            }
+            stmt.executeUpdate();
         } catch (SQLException e) {
             log.error("update data fail. ", e);
         }
@@ -133,18 +111,12 @@ public class MysqlOperations extends StorageThread {
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.DELETE))
         ) {
-            if (ids.size() == 0) {
+            if (initIds.size() == 0) {
                 log.info("size is zero");
                 return;
             }
             stmt.setString(1, id);
-            int ret = stmt.executeUpdate();
-            if (ret == 1) {
-                log.info("delete success.");
-                ids.remove(0);
-            } else {
-                log.error("delete fail.");
-            }
+            stmt.executeUpdate();
         } catch (SQLException e) {
             log.error("delete data fail. ", e);
         }

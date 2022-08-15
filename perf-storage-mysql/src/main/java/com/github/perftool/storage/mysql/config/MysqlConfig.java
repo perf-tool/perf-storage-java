@@ -55,4 +55,7 @@ public class MysqlConfig extends CommonConfig {
     @Value("${FIELD_LENGTH:100}")
     public String fieldLength;
 
+    @Value("${MAXIMUM_POOL_SIZE:20}")
+    public int maximumPoolSize;
+
 }

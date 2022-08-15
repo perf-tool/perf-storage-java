@@ -55,6 +55,7 @@
         <cassandra.version>3.11.2</cassandra.version>
         <HikariCP.version>5.0.1</HikariCP.version>
         <jetcd.version>0.7.3</jetcd.version>
+        <guave.version>31.1-jre</guave.version>
         <zookeeper.version>3.8.0</zookeeper.version>
         <!-- plugin -->
         <checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>

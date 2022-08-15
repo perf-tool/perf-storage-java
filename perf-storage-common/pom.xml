@@ -30,4 +30,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>perf-storage-common</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guave.version}</version>
+        </dependency>
+    </dependencies>
 </project>
