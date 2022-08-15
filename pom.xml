@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- dependency -->
         <annotations.version>23.0.0</annotations.version>
-        <aws-java-sdk-s3.version>1.12.280</aws-java-sdk-s3.version>
+        <aws-java-sdk-s3.version>1.12.281</aws-java-sdk-s3.version>
         <cassandra.version>3.11.2</cassandra.version>
         <guave.version>31.1-jre</guave.version>
         <HikariCP.version>5.0.1</HikariCP.version>
