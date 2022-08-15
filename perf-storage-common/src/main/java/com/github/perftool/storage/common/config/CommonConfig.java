@@ -33,15 +33,15 @@ public class CommonConfig {
     @Value("${FIXED_THREAD_NUM:10}")
     public int fixedThreadNum;
 
+    @Value("${THREAD_RATE_LIMIT}")
+    public int threadRateLimit;
+
+    @Value("${THREAD_RATE_LIMIT_TIMEOUT_MS:2}")
+    public int threadRateLimitTimeoutMs;
+
     @Value("${READ_RATE_PERCENT:0.25}")
     public double readRatePercent;
 
     @Value("${UPDATE_RATE_PERCENT:0.75}")
     public double updateRatePercent;
-
-    @Value("${STORAGE_RATE_LIMITER}")
-    public int rateLimiter;
-
-    @Value("${RATE_LIMIT_TIMEOUT_SECONDS:2}")
-    public int rateLimitTimeoutSeconds;
 }

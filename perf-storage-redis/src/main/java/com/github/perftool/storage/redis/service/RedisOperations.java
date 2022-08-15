@@ -35,7 +35,7 @@ public class RedisOperations extends StorageThread {
     private final RedisConfig redisConfig;
 
     public RedisOperations(List<String> ids, RedisConfig redisConfig, RedisTemplate<String, Object> redisTemplate) {
-        super(redisConfig.rateLimiter, redisConfig.rateLimitTimeoutSeconds, ids);
+        super(redisConfig.threadRateLimit, redisConfig.threadRateLimitTimeoutMs, ids);
         this.redisConfig = redisConfig;
         this.redisTemplate = redisTemplate;
     }

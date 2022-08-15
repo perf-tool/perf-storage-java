@@ -43,10 +43,8 @@ public class MysqlOperations extends StorageThread {
     private final MysqlConfig mysqlConfig;
     private final DataSource dataSource;
 
-
     public MysqlOperations(DataSource dataSource, MysqlConfig mysqlConfig, List<String> ids) {
-        super(mysqlConfig.rateLimiter, mysqlConfig.rateLimitTimeoutSeconds, ids);
-
+        super(mysqlConfig.threadRateLimit, mysqlConfig.threadRateLimitTimeoutMs, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;
         this.dataSource = dataSource;
