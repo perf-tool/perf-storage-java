@@ -44,7 +44,7 @@ public class MysqlOperations extends StorageThread {
     private final DataSource dataSource;
 
     public MysqlOperations(DataSource dataSource, MysqlConfig mysqlConfig, List<String> ids) {
-        super(mysqlConfig.threadRateLimit, mysqlConfig.threadRateLimitTimeoutMs, ids);
+        super(mysqlConfig, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;
         this.dataSource = dataSource;
@@ -62,7 +62,7 @@ public class MysqlOperations extends StorageThread {
         ) {
             stmt.setString(1, id);
             for (int i = 2; i <= mysqlConfig.fieldCount; i++) {
-                stmt.setString(i, RandomUtils.random() + "");
+                stmt.setString(i, RandomUtils.getRandomStr(mysqlConfig.fieldValueLength));
             }
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -72,15 +72,12 @@ public class MysqlOperations extends StorageThread {
 
     @Override
     public void updateData(String id) {
-        if (RandomUtils.randomPercentage() > mysqlConfig.updateRatePercent) {
-            return;
-        }
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.UPDATE))
         ) {
             for (int i = 1; i <= mysqlConfig.updateFieldCount; i++) {
-                stmt.setString(i, RandomUtils.random() + "");
+                stmt.setString(i, RandomUtils.getRandomStr(mysqlConfig.fieldValueLength));
             }
             stmt.setString(mysqlConfig.updateFieldCount + 1, id);
             stmt.executeUpdate();
@@ -91,9 +88,6 @@ public class MysqlOperations extends StorageThread {
 
     @Override
     public void readData(String id) {
-        if (mysqlConfig.readRatePercent < RandomUtils.randomPercentage()) {
-            return;
-        }
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.READ))

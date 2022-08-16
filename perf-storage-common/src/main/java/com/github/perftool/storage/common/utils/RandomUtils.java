@@ -20,6 +20,7 @@
 package com.github.perftool.storage.common.utils;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomUtils {
 
@@ -36,4 +37,21 @@ public class RandomUtils {
     public static int randomElem(int listSize) {
         return random.nextInt(listSize);
     }
+
+    public static String getRandomStr(int strLength) {
+        StringBuilder messageBuilder = new StringBuilder(strLength);
+        for (int i = 0; i < strLength; i++) {
+            messageBuilder.append('a' + ThreadLocalRandom.current().nextInt(26));
+        }
+        return messageBuilder.toString();
+    }
+
+    public static byte[] getRandomBytes(int messageByte) {
+        byte[] array = new byte[messageByte];
+        for (int i = 0; i < messageByte; i++) {
+            array[i] = (byte) (97 + ThreadLocalRandom.current().nextInt(26));
+        }
+        return array;
+    }
+
 }
