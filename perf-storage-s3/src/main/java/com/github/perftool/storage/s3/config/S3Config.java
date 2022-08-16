@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -17,48 +17,32 @@
  * under the License.
  */
 
-package com.github.perftool.storage.mysql.config;
+package com.github.perftool.storage.s3.config;
 
 import com.github.perftool.storage.common.config.CommonConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Configuration
 @Component
-public class MysqlConfig extends CommonConfig {
+@Configuration
+public class S3Config extends CommonConfig {
 
-    @Value("${MYSQL_HOST:localhost}")
-    public String host;
+    @Value("${AWS_ACCESS_KEY:}")
+    public String accessKey;
 
-    @Value("${MYSQL_PORT:3306}")
-    public int port;
+    @Value("${AWS_SECRET_KEY:}")
+    public String secretKey;
 
-    @Value("${MYSQL_DB_NAME:}")
-    public String dbName;
+    @Value("${BUCKET_NAME:testbucket}")
+    public String bucketName;
 
-    @Value("${MYSQL_TABLE_NAME:perf_table}")
-    public String tableName;
-
-    @Value("${MYSQL_TABLE_USER:}")
-    public String user;
-
-    @Value("${MYSQL_PASSWORD:}")
-    public String password;
-
-    @Value("${MYSQL_FIELDS_COUNT:10}")
-    public int fieldCount;
-
-    @Value("${MYSQL_UPDATE_FIELDS_COUNT:1}")
-    public int updateFieldCount;
-
-    @Value("${FIELD_LENGTH:100}")
-    public String fieldLength;
-
-    @Value("${MAXIMUM_POOL_SIZE:20}")
-    public int maximumPoolSize;
+    @Value("${AWS_SERVICE_ENDPOINT:http://localhost:9000}")
+    public String serviceEndpoint;
 
     @Value("${FIELD_VALUE_LENGTH}")
     public int fieldValueLength;
 
 }
+
+

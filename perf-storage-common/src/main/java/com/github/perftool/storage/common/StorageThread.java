@@ -19,6 +19,7 @@
 
 package com.github.perftool.storage.common;
 
+import com.github.perftool.storage.common.config.CommonConfig;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,25 +29,29 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class StorageThread extends Thread {
 
-    private final int rateLimitTimeoutSeconds;
+    private final CommonConfig commonConfig;
 
     private final RateLimiter rateLimiter;
 
     public List<String> initIds;
 
-    public StorageThread(int rateLimiter, int rateLimitTimeoutSeconds, List<String> initIds) {
-        this.rateLimiter = RateLimiter.create(rateLimiter);
-        this.rateLimitTimeoutSeconds = rateLimitTimeoutSeconds;
+    public StorageThread(CommonConfig commonConfig, List<String> initIds) {
+        this.rateLimiter = RateLimiter.create(commonConfig.threadRateLimit);
+        this.commonConfig = commonConfig;
         this.initIds = initIds;
     }
 
     @Override
     public void run() {
         while (true) {
-            if (rateLimiter.tryAcquire(rateLimitTimeoutSeconds, TimeUnit.MILLISECONDS)) {
+            if (rateLimiter.tryAcquire(commonConfig.threadRateLimitTimeoutMs, TimeUnit.MILLISECONDS)) {
                 try {
-                    this.readData(initIds.get(RandomUtils.randomElem(initIds.size())));
-                    this.updateData(initIds.get(RandomUtils.randomElem(initIds.size())));
+                    if (commonConfig.readRatePercent > RandomUtils.randomPercentage()) {
+                        this.readData(initIds.get(RandomUtils.randomElem(initIds.size())));
+                    }
+                    if (commonConfig.updateRatePercent > RandomUtils.randomPercentage()) {
+                        this.updateData(initIds.get(RandomUtils.randomElem(initIds.size())));
+                    }
                 } catch (Throwable e) {
                     log.error("unexpected exception ", e);
                 }

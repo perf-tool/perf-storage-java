@@ -20,7 +20,6 @@
 package com.github.perftool.storage.redis.service;
 
 import com.github.perftool.storage.common.StorageThread;
-import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,7 +34,7 @@ public class RedisOperations extends StorageThread {
     private final RedisConfig redisConfig;
 
     public RedisOperations(List<String> ids, RedisConfig redisConfig, RedisTemplate<String, Object> redisTemplate) {
-        super(redisConfig.threadRateLimit, redisConfig.threadRateLimitTimeoutMs, ids);
+        super(redisConfig, ids);
         this.redisConfig = redisConfig;
         this.redisTemplate = redisTemplate;
     }
@@ -47,19 +46,11 @@ public class RedisOperations extends StorageThread {
 
     @Override
     public void updateData(String id) {
-        if (redisConfig.updateRatePercent < RandomUtils.randomPercentage()) {
-            return;
-        }
-        log.info("the id {}", id);
         redisTemplate.opsForValue().set(id, id + "-update");
-
     }
 
     @Override
     public void readData(String id) {
-        if (redisConfig.readRatePercent < RandomUtils.randomPercentage()) {
-            return;
-        }
         redisTemplate.opsForValue().get(id);
     }
 

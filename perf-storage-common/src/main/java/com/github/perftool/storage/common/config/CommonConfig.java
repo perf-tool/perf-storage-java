@@ -33,7 +33,7 @@ public class CommonConfig {
     @Value("${FIXED_THREAD_NUM:10}")
     public int fixedThreadNum;
 
-    @Value("${THREAD_RATE_LIMIT}")
+    @Value("${THREAD_RATE_LIMIT:1000}")
     public int threadRateLimit;
 
     @Value("${THREAD_RATE_LIMIT_TIMEOUT_MS:2}")
@@ -44,4 +44,5 @@ public class CommonConfig {
 
     @Value("${UPDATE_RATE_PERCENT:0.75}")
     public double updateRatePercent;
+
 }

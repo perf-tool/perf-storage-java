@@ -23,6 +23,7 @@ package com.github.perftool.storage.service;
 import com.github.perftool.storage.config.StorageConfig;
 import com.github.perftool.storage.mysql.service.MysqlBootService;
 import com.github.perftool.storage.redis.service.RedisBootService;
+import com.github.perftool.storage.s3.service.S3BootService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class BootService {
     @Autowired
     private RedisBootService redisBootService;
 
+    @Autowired
+    private S3BootService s3BootService;
+
     @PostConstruct
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
@@ -49,6 +53,7 @@ public class BootService {
             case DUMMY -> log.info("dummy storage");
             case MYSQL -> mysqlBootService.boot();
             case REDIS -> redisBootService.boot();
+            case S3 -> s3BootService.boot();
             default -> {
             }
         }
