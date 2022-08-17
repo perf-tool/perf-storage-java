@@ -59,6 +59,8 @@ public class S3BootService {
     private AmazonS3 createAmazonS3() {
         AWSCredentials credentials = new BasicAWSCredentials(s3Config.accessKey, s3Config.secretKey);
         ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setConnectionTimeout(s3Config.awsConnectTimeoutMs);
+        clientConfiguration.setRequestTimeout(s3Config.awsRequestTimeout);
         clientConfiguration.setSignerOverride("AWSS3V4SignerType");
         return AmazonS3ClientBuilder
                 .standard()

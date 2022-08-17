@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommonConfig {
 
-    @Value("${DATA_SET_SIZE:10000}")
+    @Value("${DATA_SET_SIZE:100000}")
     public int dataSetSize;
 
     @Value("${FIXED_THREAD_NUM:10}")

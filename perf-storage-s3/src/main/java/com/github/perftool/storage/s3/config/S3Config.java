@@ -28,10 +28,10 @@ import org.springframework.stereotype.Component;
 @Configuration
 public class S3Config extends CommonConfig {
 
-    @Value("${AWS_ACCESS_KEY:}")
+    @Value("${AWS_ACCESS_KEY:admin}")
     public String accessKey;
 
-    @Value("${AWS_SECRET_KEY:}")
+    @Value("${AWS_SECRET_KEY:password}")
     public String secretKey;
 
     @Value("${BUCKET_NAME:testbucket}")
@@ -40,8 +40,14 @@ public class S3Config extends CommonConfig {
     @Value("${AWS_SERVICE_ENDPOINT:http://localhost:9000}")
     public String serviceEndpoint;
 
-    @Value("${FIELD_VALUE_LENGTH}")
-    public int fieldValueLength;
+    @Value("${AWS_CONNECT_TIMEOUT_MS:5000}")
+    public int awsConnectTimeoutMs;
+
+    @Value("${AWS_REQUEST_TIMEOUT_MS:15000}")
+    public int awsRequestTimeout;
+
+    @Value("${DATA_SIZE:10240}")
+    public int dataSize;
 
 }
 

@@ -20,12 +20,18 @@
 package com.github.perftool.storage.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.S3Object;
 import com.github.perftool.storage.common.StorageThread;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.s3.config.S3Config;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@Slf4j
 public class S3Operations extends StorageThread {
 
     private final S3Config s3Config;
@@ -39,17 +45,22 @@ public class S3Operations extends StorageThread {
 
     @Override
     public void insertData(String key) {
-        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.fieldValueLength));
+        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
     }
 
     @Override
     public void updateData(String key) {
-        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.fieldValueLength));
+        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
     }
 
     @Override
     public void readData(String key) {
-        s3Client.getObject(s3Config.bucketName, key);
+        S3Object s3ClientObject = s3Client.getObject(s3Config.bucketName, key);
+        try {
+            IOUtils.toString(s3ClientObject.getObjectContent(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.warn("read content error ", e);
+        }
     }
 
     @Override
