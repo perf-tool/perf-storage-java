@@ -40,8 +40,8 @@ public class S3Config extends CommonConfig {
     @Value("${AWS_SERVICE_ENDPOINT:http://localhost:9000}")
     public String serviceEndpoint;
 
-    @Value("${FIELD_VALUE_LENGTH}")
-    public int fieldValueLength;
+    @Value("${DATA_SIZE}")
+    public int dataSize;
 
 }
 

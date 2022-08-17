@@ -39,12 +39,12 @@ public class S3Operations extends StorageThread {
 
     @Override
     public void insertData(String key) {
-        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.fieldValueLength));
+        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
     }
 
     @Override
     public void updateData(String key) {
-        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.fieldValueLength));
+        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
     }
 
     @Override
