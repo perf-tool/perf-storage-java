@@ -16,21 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.perftool.storage.mysql.flavor;
 
-import lombok.extern.slf4j.Slf4j;
+package com.github.perftool.storage.mysql.constant;
 
-
-@Slf4j
-public abstract class DBFlavor {
-
-
-    public abstract String insertStatement(String tableName);
-
-    public abstract String readStatement(String tableName);
-
-    public abstract String deleteStatement(String tableName);
-
-    public abstract String updateStatement(String tableName);
-
+public class Constants {
+    public static final String DEFAULT_TABLE_NAME_PREFIX = "perf_table";
 }

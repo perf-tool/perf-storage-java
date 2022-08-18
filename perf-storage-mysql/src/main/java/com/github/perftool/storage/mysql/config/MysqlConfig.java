@@ -37,10 +37,10 @@ public class MysqlConfig extends CommonConfig {
     @Value("${MYSQL_DB_NAME:}")
     public String dbName;
 
-    @Value("${MYSQL_TABLE_NAME:perf_table}")
-    public String tableName;
+    @Value("${MYSQL_TABLE_COUNT:5}")
+    public int tableCount;
 
-    @Value("${MYSQL_TABLE_USER:}")
+    @Value("${MYSQL_USER:}")
     public String user;
 
     @Value("${MYSQL_PASSWORD:}")

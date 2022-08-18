@@ -21,6 +21,7 @@ package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.utils.IDUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
+import com.github.perftool.storage.mysql.constant.Constants;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +46,10 @@ public class MysqlBootService {
     public void boot() {
         List<String> ids = IDUtils.getTargetIds(mysqlConfig.dataSetSize);
         DataSource dataSource = createDatasource();
-        this.initPerfTable(dataSource);
-        this.initData(new MysqlOperations(dataSource, mysqlConfig, ids));
+        for (int i = 0; i < mysqlConfig.tableCount; i++) {
+            this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
+            this.initData(new MysqlOperations(dataSource, mysqlConfig, ids));
+        }
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
         for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
             fixedThreadPool.execute(new MysqlOperations(dataSource, mysqlConfig, ids));
@@ -63,12 +66,12 @@ public class MysqlBootService {
         return new HikariDataSource(hikariConfig);
     }
 
-    private void initPerfTable(DataSource dataSource) {
+    private void initPerfTable(DataSource dataSource, String tableName) {
         try (
                 Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement();
         ) {
-            StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + mysqlConfig.tableName + " ( ");
+            StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " ( ");
             sql.append("id varchar(" + mysqlConfig.fieldLength + ") primary key , ");
             for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
                 sql.append("field" + i + " varchar(" + mysqlConfig.fieldLength + "),");
@@ -77,7 +80,7 @@ public class MysqlBootService {
             sql.append(" )");
             stmt.execute(sql.toString());
         } catch (SQLException e) {
-            log.error("create table fail. {}", mysqlConfig.tableName, e);
+            log.error("create table fail. perf_table{}", tableName, e);
         }
     }
 

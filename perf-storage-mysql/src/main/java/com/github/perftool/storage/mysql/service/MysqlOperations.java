@@ -23,6 +23,7 @@ import com.github.perftool.storage.common.StorageThread;
 import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
+import com.github.perftool.storage.mysql.constant.Constants;
 import com.github.perftool.storage.mysql.flavor.DefaultDBFlavor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class MysqlOperations extends StorageThread {
 
-    private final ConcurrentMap<OperationType, String> cachedStatements = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> cachedStatements = new ConcurrentHashMap<>();
     private final DefaultDBFlavor defaultDBFlavor;
     private final MysqlConfig mysqlConfig;
     private final DataSource dataSource;
@@ -48,17 +49,24 @@ public class MysqlOperations extends StorageThread {
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;
         this.dataSource = dataSource;
-        cachedStatements.putIfAbsent(OperationType.INSERT, defaultDBFlavor.insertStatement());
-        cachedStatements.putIfAbsent(OperationType.UPDATE, defaultDBFlavor.updateStatement());
-        cachedStatements.putIfAbsent(OperationType.READ, defaultDBFlavor.readStatement());
-        cachedStatements.putIfAbsent(OperationType.DELETE, defaultDBFlavor.deleteStatement());
+        for (int i = 0; i < mysqlConfig.tableCount; i++) {
+            cachedStatements.putIfAbsent(OperationType.INSERT.name() + i,
+                    defaultDBFlavor.insertStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+            cachedStatements.putIfAbsent(OperationType.UPDATE.name() + i,
+                    defaultDBFlavor.updateStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+            cachedStatements.putIfAbsent(OperationType.READ.name() + i,
+                    defaultDBFlavor.readStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+            cachedStatements.putIfAbsent(OperationType.DELETE.name() + i,
+                    defaultDBFlavor.deleteStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+        }
     }
 
     @Override
     public void insertData(String id) {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.INSERT))
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements
+                        .get(OperationType.INSERT.name() + RandomUtils.randomElem(mysqlConfig.tableCount)))
         ) {
             stmt.setString(1, id);
             for (int i = 2; i <= mysqlConfig.fieldCount; i++) {
@@ -74,7 +82,8 @@ public class MysqlOperations extends StorageThread {
     public void updateData(String id) {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.UPDATE))
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements
+                        .get(OperationType.UPDATE.name() + RandomUtils.randomElem(mysqlConfig.tableCount)))
         ) {
             for (int i = 1; i <= mysqlConfig.updateFieldCount; i++) {
                 stmt.setString(i, RandomUtils.getRandomStr(mysqlConfig.fieldValueLength));
@@ -90,7 +99,8 @@ public class MysqlOperations extends StorageThread {
     public void readData(String id) {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.READ))
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements
+                        .get(OperationType.READ.name() + RandomUtils.randomElem(mysqlConfig.tableCount)))
         ) {
             stmt.setString(1, id);
             stmt.execute();
@@ -103,7 +113,8 @@ public class MysqlOperations extends StorageThread {
     public void deleteData(String id) {
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(cachedStatements.get(OperationType.DELETE))
+                PreparedStatement stmt = conn.prepareStatement(cachedStatements
+                        .get(OperationType.DELETE.name() + RandomUtils.randomElem(mysqlConfig.tableCount)))
         ) {
             if (initIds.size() == 0) {
                 log.info("size is zero");
