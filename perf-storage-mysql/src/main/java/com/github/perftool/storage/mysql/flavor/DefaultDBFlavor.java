@@ -32,9 +32,9 @@ public class DefaultDBFlavor extends DBFlavor {
     }
 
     @Override
-    public String insertStatement() {
+    public String insertStatement(String tableName) {
         StringBuilder insertSql = new StringBuilder("INSERT INTO ");
-        insertSql.append(mysqlConfig.tableName);
+        insertSql.append(tableName);
         insertSql.append(" (id,");
         for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
             insertSql.append("field" + i + ", ");
@@ -49,14 +49,14 @@ public class DefaultDBFlavor extends DBFlavor {
     }
 
     @Override
-    public String readStatement() {
-        return "SELECT * FROM " + mysqlConfig.tableName + " where id = ?";
+    public String readStatement(String tableName) {
+        return "SELECT * FROM " + tableName + " where id = ?";
     }
 
     @Override
-    public String deleteStatement() {
+    public String deleteStatement(String tableName) {
         StringBuilder deleteSql = new StringBuilder("DELETE FROM ");
-        deleteSql.append(mysqlConfig.tableName);
+        deleteSql.append(tableName);
         deleteSql.append(" WHERE ");
         deleteSql.append("id");
         deleteSql.append(" = ?");
@@ -65,9 +65,9 @@ public class DefaultDBFlavor extends DBFlavor {
     }
 
     @Override
-    public String updateStatement() {
+    public String updateStatement(String tableName) {
         StringBuilder update = new StringBuilder("UPDATE ");
-        update.append(mysqlConfig.tableName);
+        update.append(tableName);
         update.append(" SET ");
         for (int i = 1; i < mysqlConfig.updateFieldCount; i++) {
             update.append("field" + i + " = ?, ");
