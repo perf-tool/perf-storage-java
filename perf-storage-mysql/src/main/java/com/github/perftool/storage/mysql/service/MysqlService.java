@@ -34,26 +34,31 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
-public class MysqlBootService {
+public class MysqlService {
 
     @Autowired
     private MysqlConfig mysqlConfig;
 
-    public void boot(MetricFactory metricFactory, List<String> keys) {
-        DataSource dataSource = createDatasource();
+    private DataSource dataSource;
+
+    public void initDatasource() {
+        this.dataSource = createDatasource();
+    }
+
+    public void presetData(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
             this.initData(new MysqlOperations(dataSource, metricFactory, mysqlConfig, keys, i));
         }
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
-        for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
-            fixedThreadPool.execute(new MysqlOperations(dataSource, metricFactory, mysqlConfig,
-                    keys, RandomUtils.randomElem(mysqlConfig.tableCount)));
+    }
+
+    public void boot(MetricFactory metricFactory, List<String> keys) {
+        for (int i = 0; i < mysqlConfig.threadNum; i++) {
+            new MysqlOperations(dataSource, metricFactory, mysqlConfig,
+                    keys, RandomUtils.randomElem(mysqlConfig.tableCount)).start();
         }
     }
 

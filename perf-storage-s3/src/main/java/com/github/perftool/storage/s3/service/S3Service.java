@@ -33,25 +33,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
-public class S3BootService {
+public class S3Service {
 
     @Autowired
     public S3Config s3Config;
 
-    public void boot(MetricFactory metricFactory, List<String> keys) {
-        AmazonS3 s3Client = createAmazonS3();
+    private AmazonS3 s3Client;
+
+    public void initDatasource() {
+        this.s3Client = createAmazonS3();
         if (!s3Client.doesBucketExistV2(s3Config.bucketName)) {
             s3Client.createBucket(s3Config.bucketName);
         }
+    }
+
+    public void presetData(MetricFactory metricFactory, List<String> keys) {
         S3Operations s3Operations = new S3Operations(s3Config, metricFactory, s3Client, keys);
         keys.forEach(s3Operations::insertData);
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(s3Config.fixedThreadNum);
-        for (int i = 0; i < s3Config.fixedThreadNum; i++) {
-            fixedThreadPool.execute(new S3Operations(s3Config, metricFactory, s3Client, keys));
+    }
+
+    public void boot(MetricFactory metricFactory, List<String> keys) {
+        for (int i = 0; i < s3Config.threadNum; i++) {
+            new S3Operations(s3Config, metricFactory, s3Client, keys).start();
         }
     }
 
