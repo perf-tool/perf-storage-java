@@ -22,9 +22,10 @@ package com.github.perftool.storage.common.module;
 public enum OperationType {
 
     INSERT("INSERT"),
+    DELETE("DELETE"),
     UPDATE("UPDATE"),
     READ("READ"),
-    DELETE("DELETE");
+    ;
 
     OperationType(String name) {
     }

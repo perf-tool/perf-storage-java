@@ -19,7 +19,7 @@
 
 package com.github.perftool.storage.mysql.service;
 
-import com.github.perftool.storage.common.utils.IDUtils;
+import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.github.perftool.storage.mysql.constant.Constants;
@@ -44,17 +44,16 @@ public class MysqlBootService {
     @Autowired
     private MysqlConfig mysqlConfig;
 
-    public void boot() {
-        List<String> ids = IDUtils.getTargetIds(mysqlConfig.dataSetSize);
+    public void boot(MetricFactory metricFactory, List<String> keys) {
         DataSource dataSource = createDatasource();
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
-            this.initData(new MysqlOperations(dataSource, mysqlConfig, ids, i));
+            this.initData(new MysqlOperations(dataSource, metricFactory, mysqlConfig, keys, i));
         }
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
         for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
-            fixedThreadPool.execute(new MysqlOperations(dataSource, mysqlConfig,
-                    ids, RandomUtils.randomElem(mysqlConfig.tableCount)));
+            fixedThreadPool.execute(new MysqlOperations(dataSource, metricFactory, mysqlConfig,
+                    keys, RandomUtils.randomElem(mysqlConfig.tableCount)));
         }
     }
 

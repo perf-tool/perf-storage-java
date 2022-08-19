@@ -20,6 +20,7 @@
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.StorageThread;
+import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
@@ -46,8 +47,9 @@ public class MysqlOperations extends StorageThread {
 
     private final int tableIdx;
 
-    public MysqlOperations(DataSource dataSource, MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
-        super(mysqlConfig, ids);
+    public MysqlOperations(DataSource dataSource, MetricFactory metricFactory,
+                           MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
+        super(mysqlConfig, metricFactory, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;
         this.dataSource = dataSource;

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import com.github.perftool.storage.common.utils.IDUtils;
+import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -38,6 +38,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -55,14 +56,13 @@ public class RedisBootService {
 
     Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
-    public void boot() {
+    public void boot(MetricFactory metricFactory, List<String> keys) {
         this.redisTemplate = createRedisTemplate();
-        List<String> ids = IDUtils.getTargetIds(redisConfig.dataSetSize);
-        RedisOperations redisOperations = new RedisOperations(ids, redisConfig, redisTemplate);
-        ids.forEach(redisOperations::insertData);
+        RedisOperations redisOperations = new RedisOperations(keys, metricFactory, redisConfig, redisTemplate);
+        keys.forEach(redisOperations::insertData);
         ExecutorService executorService = Executors.newFixedThreadPool(redisConfig.fixedThreadNum);
         for (int i = 0; i < redisConfig.fixedThreadNum; i++) {
-            executorService.execute(new RedisOperations(ids, redisConfig, redisTemplate));
+            executorService.execute(new RedisOperations(keys, metricFactory, redisConfig, redisTemplate));
         }
     }
 
