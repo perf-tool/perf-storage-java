@@ -65,7 +65,8 @@ public class BootService {
         log.info("storage type : {}", storageConfig.storageType);
         MetricFactory metricFactory = metricsService.acquireMetricFactory(storageConfig.storageType);
         List<String> keys = IDUtils.getTargetIds(commonConfig.dataSetSize);
-        ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("perf-storage-init"));
+        ExecutorService executorService =
+                Executors.newSingleThreadExecutor(new DefaultThreadFactory("perf-storage-init"));
         executorService.execute(() -> BootService.this.initAsync(metricFactory, keys));
     }
 
