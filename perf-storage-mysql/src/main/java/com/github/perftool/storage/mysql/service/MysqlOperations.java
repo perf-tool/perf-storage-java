@@ -44,11 +44,14 @@ public class MysqlOperations extends StorageThread {
     private final MysqlConfig mysqlConfig;
     private final DataSource dataSource;
 
-    public MysqlOperations(DataSource dataSource, MysqlConfig mysqlConfig, List<String> ids) {
+    private final int tableIdx;
+
+    public MysqlOperations(DataSource dataSource, MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
         super(mysqlConfig, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;
         this.dataSource = dataSource;
+        this.tableIdx = tableIdx;
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             cachedStatements.putIfAbsent(OperationType.INSERT.name() + i,
                     defaultDBFlavor.insertStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
@@ -66,7 +69,7 @@ public class MysqlOperations extends StorageThread {
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements
-                        .get(OperationType.INSERT.name() + RandomUtils.randomElem(mysqlConfig.tableCount)))
+                        .get(OperationType.INSERT.name() + tableIdx))
         ) {
             stmt.setString(1, id);
             for (int i = 2; i <= mysqlConfig.fieldCount; i++) {

@@ -20,6 +20,7 @@
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.utils.IDUtils;
+import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.github.perftool.storage.mysql.constant.Constants;
 import com.zaxxer.hikari.HikariConfig;
@@ -48,11 +49,12 @@ public class MysqlBootService {
         DataSource dataSource = createDatasource();
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
-            this.initData(new MysqlOperations(dataSource, mysqlConfig, ids));
+            this.initData(new MysqlOperations(dataSource, mysqlConfig, ids, i));
         }
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
         for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
-            fixedThreadPool.execute(new MysqlOperations(dataSource, mysqlConfig, ids));
+            fixedThreadPool.execute(new MysqlOperations(dataSource, mysqlConfig,
+                    ids, RandomUtils.randomElem(mysqlConfig.tableCount)));
         }
     }
 
