@@ -62,7 +62,8 @@ public class MysqlService {
 
     private void presetData(MetricFactory metricFactory, List<String> keys, int tableIdx) {
         ExecutorService threadPool = Executors.newFixedThreadPool(mysqlConfig.presetThreadNum);
-        MysqlStorageThread mysqlStorageThread = new MysqlStorageThread(dataSource, metricFactory, mysqlConfig, keys, tableIdx);
+        MysqlStorageThread mysqlStorageThread =
+                new MysqlStorageThread(dataSource, metricFactory, mysqlConfig, keys, tableIdx);
         List<Callable<Object>> callableList =
                 keys.stream().map(s -> Executors.callable(() -> mysqlStorageThread.insertData(s)))
                         .collect(Collectors.toList());

@@ -28,7 +28,6 @@ import com.github.perftool.storage.s3.config.S3Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
