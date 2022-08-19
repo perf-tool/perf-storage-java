@@ -30,10 +30,13 @@ public class CommonConfig {
     @Value("${DATA_SET_SIZE:10}")
     public int dataSetSize;
 
-    @Value("${THREAD_NUM:10}")
+    @Value("${PRESET_THREAD_NUM:100}")
+    public int presetThreadNum;
+
+    @Value("${THREAD_NUM:100}")
     public int threadNum;
 
-    @Value("${THREAD_RATE_LIMIT:1000}")
+    @Value("${THREAD_RATE_LIMIT:100}")
     public int threadRateLimit;
 
     @Value("${THREAD_RATE_LIMIT_TIMEOUT_MS:2}")

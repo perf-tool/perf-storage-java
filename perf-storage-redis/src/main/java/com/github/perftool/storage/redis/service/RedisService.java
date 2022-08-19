@@ -41,6 +41,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -60,7 +64,16 @@ public class RedisService {
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(redisConfig.presetThreadNum);
         RedisStorageThread redisStorageThread = new RedisStorageThread(keys, metricFactory, redisConfig, redisTemplate);
+        List<Callable<Object>> callableList =
+                keys.stream().map(s -> Executors.callable(() -> redisStorageThread.insertData(s)))
+                        .collect(Collectors.toList());
+        try {
+            threadPool.invokeAll(callableList);
+        } catch (InterruptedException e) {
+            log.error("preset s3 data failed ", e);
+        }
         keys.forEach(redisStorageThread::insertData);
     }
 

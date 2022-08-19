@@ -46,26 +46,50 @@ public class S3StorageThread extends AbstractStorageThread {
 
     @Override
     public void insertData(String key) {
-        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
+        long start = System.currentTimeMillis();
+        try {
+            s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
+            insertMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            insertMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("s3 put object error ", e);
+        }
     }
 
     @Override
     public void updateData(String key) {
-        s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
+        long start = System.currentTimeMillis();
+        try {
+            s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
+            updateMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            updateMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("s3 update object error ", e);
+        }
     }
 
     @Override
     public void readData(String key) {
-        S3Object s3ClientObject = s3Client.getObject(s3Config.bucketName, key);
+        long start = System.currentTimeMillis();
         try {
+            S3Object s3ClientObject = s3Client.getObject(s3Config.bucketName, key);
             IOUtils.toString(s3ClientObject.getObjectContent(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.warn("read content error ", e);
+            readMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            readMetricBean.fail(System.currentTimeMillis() - start);
+            log.warn("s3 read content error ", e);
         }
     }
 
     @Override
     public void deleteData(String key) {
-        s3Client.deleteObject(s3Config.bucketName, key);
+        long start = System.currentTimeMillis();
+        try {
+            s3Client.deleteObject(s3Config.bucketName, key);
+            deleteMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            deleteMetricBean.fail(System.currentTimeMillis() - start);
+            log.warn("s3 delete content error ", e);
+        }
     }
 }
