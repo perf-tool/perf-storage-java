@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.github.perftool.storage.common.metrics.MetricFactory;
-import com.github.perftool.storage.common.utils.IDUtils;
 import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -39,6 +38,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;

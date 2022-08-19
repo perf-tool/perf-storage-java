@@ -20,7 +20,6 @@
 package com.github.perftool.storage.redis.service;
 
 import com.github.perftool.storage.common.StorageThread;
-import com.github.perftool.storage.common.metrics.MetricBean;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,8 @@ public class RedisOperations extends StorageThread {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisConfig redisConfig;
 
-    public RedisOperations(List<String> ids, MetricFactory metricFactory, RedisConfig redisConfig, RedisTemplate<String, Object> redisTemplate) {
+    public RedisOperations(List<String> ids, MetricFactory metricFactory,
+                           RedisConfig redisConfig, RedisTemplate<String, Object> redisTemplate) {
         super(redisConfig, metricFactory, ids);
         this.redisConfig = redisConfig;
         this.redisTemplate = redisTemplate;

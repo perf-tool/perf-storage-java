@@ -20,7 +20,6 @@
 package com.github.perftool.storage.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.github.perftool.storage.common.StorageThread;
 import com.github.perftool.storage.common.metrics.MetricFactory;
