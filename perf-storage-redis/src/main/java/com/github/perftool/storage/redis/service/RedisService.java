@@ -60,13 +60,13 @@ public class RedisService {
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
-        RedisOperations redisOperations = new RedisOperations(keys, metricFactory, redisConfig, redisTemplate);
-        keys.forEach(redisOperations::insertData);
+        RedisStorageThread redisStorageThread = new RedisStorageThread(keys, metricFactory, redisConfig, redisTemplate);
+        keys.forEach(redisStorageThread::insertData);
     }
 
     public void boot(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < redisConfig.threadNum; i++) {
-            new RedisOperations(keys, metricFactory, redisConfig, redisTemplate).start();
+            new RedisStorageThread(keys, metricFactory, redisConfig, redisTemplate).start();
         }
     }
 

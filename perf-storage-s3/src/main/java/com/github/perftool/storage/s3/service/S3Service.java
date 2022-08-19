@@ -50,13 +50,13 @@ public class S3Service {
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
-        S3Operations s3Operations = new S3Operations(s3Config, metricFactory, s3Client, keys);
-        keys.forEach(s3Operations::insertData);
+        S3StorageThread s3StorageThread = new S3StorageThread(s3Config, metricFactory, s3Client, keys);
+        keys.forEach(s3StorageThread::insertData);
     }
 
     public void boot(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < s3Config.threadNum; i++) {
-            new S3Operations(s3Config, metricFactory, s3Client, keys).start();
+            new S3StorageThread(s3Config, metricFactory, s3Client, keys).start();
         }
     }
 

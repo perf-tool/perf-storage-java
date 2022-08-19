@@ -21,7 +21,7 @@ package com.github.perftool.storage.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
-import com.github.perftool.storage.common.StorageThread;
+import com.github.perftool.storage.common.AbstractStorageThread;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.s3.config.S3Config;
@@ -33,12 +33,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
-public class S3Operations extends StorageThread {
+public class S3StorageThread extends AbstractStorageThread {
 
     private final S3Config s3Config;
     private final AmazonS3 s3Client;
 
-    public S3Operations(S3Config s3Config, MetricFactory metricFactory, AmazonS3 s3Client, List<String> keys) {
+    public S3StorageThread(S3Config s3Config, MetricFactory metricFactory, AmazonS3 s3Client, List<String> keys) {
         super(s3Config, metricFactory, keys);
         this.s3Config = s3Config;
         this.s3Client = s3Client;
