@@ -41,28 +41,32 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 @Slf4j
 @Service
-public class RedisBootService {
+public class RedisService {
 
     @Autowired
     private RedisConfig redisConfig;
 
     private RedisTemplate<String, Object> redisTemplate;
 
-    Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+    private final Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer =
+            new Jackson2JsonRedisSerializer<>(Object.class);
 
-    public void boot(MetricFactory metricFactory, List<String> keys) {
+    public void initDatasource() {
         this.redisTemplate = createRedisTemplate();
+    }
+
+    public void presetData(MetricFactory metricFactory, List<String> keys) {
         RedisOperations redisOperations = new RedisOperations(keys, metricFactory, redisConfig, redisTemplate);
         keys.forEach(redisOperations::insertData);
-        ExecutorService executorService = Executors.newFixedThreadPool(redisConfig.fixedThreadNum);
-        for (int i = 0; i < redisConfig.fixedThreadNum; i++) {
-            executorService.execute(new RedisOperations(keys, metricFactory, redisConfig, redisTemplate));
+    }
+
+    public void boot(MetricFactory metricFactory, List<String> keys) {
+        for (int i = 0; i < redisConfig.threadNum; i++) {
+            new RedisOperations(keys, metricFactory, redisConfig, redisTemplate).start();
         }
     }
 

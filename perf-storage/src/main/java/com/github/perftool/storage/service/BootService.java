@@ -21,13 +21,14 @@ package com.github.perftool.storage.service;
 
 
 import com.github.perftool.storage.common.config.CommonConfig;
+import com.github.perftool.storage.common.config.StorageType;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.service.MetricsService;
 import com.github.perftool.storage.common.utils.IDUtils;
 import com.github.perftool.storage.config.StorageConfig;
-import com.github.perftool.storage.mysql.service.MysqlBootService;
-import com.github.perftool.storage.redis.service.RedisBootService;
-import com.github.perftool.storage.s3.service.S3BootService;
+import com.github.perftool.storage.mysql.service.MysqlService;
+import com.github.perftool.storage.redis.service.RedisService;
+import com.github.perftool.storage.s3.service.S3Service;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +50,13 @@ public class BootService {
     private CommonConfig commonConfig;
 
     @Autowired
-    private MysqlBootService mysqlBootService;
+    private MysqlService mysqlService;
 
     @Autowired
-    private RedisBootService redisBootService;
+    private RedisService redisService;
 
     @Autowired
-    private S3BootService s3BootService;
+    private S3Service s3Service;
 
     @Autowired
     private MetricsService metricsService;
@@ -76,11 +77,28 @@ public class BootService {
     public void initAsync(MetricFactory metricFactory, List<String> keys) {
         switch (storageConfig.storageType) {
             case DUMMY -> log.info("dummy storage");
-            case MYSQL -> mysqlBootService.boot(metricFactory, keys);
-            case REDIS -> redisBootService.boot(metricFactory, keys);
-            case S3 -> s3BootService.boot(metricFactory, keys);
+            case MYSQL -> mysqlService.initDatasource();
+            case REDIS -> redisService.initDatasource();
+            case S3 -> s3Service.initDatasource();
             default -> {
             }
+        }
+        switch (storageConfig.storageType) {
+            case DUMMY -> log.info("dummy storage");
+            case MYSQL -> mysqlService.presetData(metricFactory, keys);
+            case REDIS -> redisService.presetData(metricFactory, keys);
+            case S3 -> s3Service.presetData(metricFactory, keys);
+            default -> {
+            }
+        }
+        if (storageConfig.storageType == StorageType.DUMMY) {
+            log.info("dummy storage");
+        } else if (storageConfig.storageType == StorageType.MYSQL) {
+            mysqlService.boot(metricFactory, keys);
+        } else if (storageConfig.storageType == StorageType.REDIS) {
+            redisService.boot(metricFactory, keys);
+        } else if (storageConfig.storageType == StorageType.S3) {
+            s3Service.boot(metricFactory, keys);
         }
     }
 
