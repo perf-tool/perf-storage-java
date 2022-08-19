@@ -29,6 +29,9 @@ import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.RedisConfiguration;
+import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
@@ -88,18 +91,34 @@ public class RedisService {
         genericObjectPoolConfig.setMaxIdle(redisConfig.maxIdle);
         genericObjectPoolConfig.setMinIdle(redisConfig.minIdle);
         genericObjectPoolConfig.setMaxTotal(redisConfig.maxActive);
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setDatabase(redisConfig.database);
-        redisStandaloneConfiguration.setHostName(redisConfig.host);
-        redisStandaloneConfiguration.setPort(redisConfig.port);
-        redisStandaloneConfiguration.setPassword(RedisPassword.of(redisConfig.password));
+        RedisConfiguration redisConfiguration;
+        if (redisConfig.redisClusterEnable) {
+            RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
+            String[] urls = redisConfig.clusterNodeUrl.split(",");
+            for (int i = 0; i < urls.length; i++) {
+                String[] url = urls[i].split(":");
+                redisClusterConfiguration.addClusterNode(new RedisNode(url[0], Integer.parseInt(url[1])));
+            }
+            redisClusterConfiguration.setUsername(redisConfig.user);
+            redisClusterConfiguration.setPassword(redisConfig.password);
+            redisConfiguration = redisClusterConfiguration;
+        } else {
+            RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+            String[] url = redisConfig.clusterNodeUrl.split(",");
+            redisStandaloneConfiguration.setDatabase(redisConfig.database);
+            redisStandaloneConfiguration.setHostName(url[0]);
+            redisStandaloneConfiguration.setPort(Integer.parseInt(url[1]));
+            redisStandaloneConfiguration.setPassword(RedisPassword.of(redisConfig.password));
+            redisConfiguration = redisStandaloneConfiguration;
+        }
+
         LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .commandTimeout(Duration.ofMillis(redisConfig.timeout))
                 .shutdownTimeout(Duration.ofMillis(redisConfig.shutDownTimeout))
                 .poolConfig(genericObjectPoolConfig)
                 .build();
 
-        LettuceConnectionFactory factory = new LettuceConnectionFactory(redisStandaloneConfiguration, clientConfig);
+        LettuceConnectionFactory factory = new LettuceConnectionFactory(redisConfiguration, clientConfig);
         factory.afterPropertiesSet();
         return factory;
     }
