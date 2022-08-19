@@ -20,7 +20,6 @@
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.metrics.MetricFactory;
-import com.github.perftool.storage.common.utils.IDUtils;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.github.perftool.storage.mysql.constant.Constants;
