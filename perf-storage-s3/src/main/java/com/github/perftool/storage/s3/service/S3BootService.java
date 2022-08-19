@@ -43,12 +43,11 @@ public class S3BootService {
     @Autowired
     public S3Config s3Config;
 
-    public void boot(MetricFactory metricFactory) {
+    public void boot(MetricFactory metricFactory, List<String> keys) {
         AmazonS3 s3Client = createAmazonS3();
         if (!s3Client.doesBucketExistV2(s3Config.bucketName)) {
             s3Client.createBucket(s3Config.bucketName);
         }
-        List<String> keys = IDUtils.getTargetIds(s3Config.dataSetSize);
         S3Operations s3Operations = new S3Operations(s3Config, metricFactory, s3Client, keys);
         keys.forEach(s3Operations::insertData);
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(s3Config.fixedThreadNum);

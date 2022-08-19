@@ -47,7 +47,8 @@ public class MysqlOperations extends StorageThread {
 
     private final int tableIdx;
 
-    public MysqlOperations(DataSource dataSource, MetricFactory metricFactory, MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
+    public MysqlOperations(DataSource dataSource, MetricFactory metricFactory,
+                           MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
         super(mysqlConfig, metricFactory, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;

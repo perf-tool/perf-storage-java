@@ -45,17 +45,16 @@ public class MysqlBootService {
     @Autowired
     private MysqlConfig mysqlConfig;
 
-    public void boot(MetricFactory metricFactory) {
-        List<String> ids = IDUtils.getTargetIds(mysqlConfig.dataSetSize);
+    public void boot(MetricFactory metricFactory, List<String> keys) {
         DataSource dataSource = createDatasource();
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
-            this.initData(new MysqlOperations(dataSource, metricFactory, mysqlConfig, ids, i));
+            this.initData(new MysqlOperations(dataSource, metricFactory, mysqlConfig, keys, i));
         }
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(mysqlConfig.fixedThreadNum);
         for (int i = 0; i < mysqlConfig.fixedThreadNum; i++) {
             fixedThreadPool.execute(new MysqlOperations(dataSource, metricFactory, mysqlConfig,
-                    ids, RandomUtils.randomElem(mysqlConfig.tableCount)));
+                    keys, RandomUtils.randomElem(mysqlConfig.tableCount)));
         }
     }
 

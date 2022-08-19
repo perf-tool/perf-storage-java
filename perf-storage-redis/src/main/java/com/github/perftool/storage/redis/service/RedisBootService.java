@@ -56,14 +56,13 @@ public class RedisBootService {
 
     Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
-    public void boot(MetricFactory metricFactory) {
+    public void boot(MetricFactory metricFactory, List<String> keys) {
         this.redisTemplate = createRedisTemplate();
-        List<String> ids = IDUtils.getTargetIds(redisConfig.dataSetSize);
-        RedisOperations redisOperations = new RedisOperations(ids, metricFactory, redisConfig, redisTemplate);
-        ids.forEach(redisOperations::insertData);
+        RedisOperations redisOperations = new RedisOperations(keys, metricFactory, redisConfig, redisTemplate);
+        keys.forEach(redisOperations::insertData);
         ExecutorService executorService = Executors.newFixedThreadPool(redisConfig.fixedThreadNum);
         for (int i = 0; i < redisConfig.fixedThreadNum; i++) {
-            executorService.execute(new RedisOperations(ids, metricFactory, redisConfig, redisTemplate));
+            executorService.execute(new RedisOperations(keys, metricFactory, redisConfig, redisTemplate));
         }
     }
 

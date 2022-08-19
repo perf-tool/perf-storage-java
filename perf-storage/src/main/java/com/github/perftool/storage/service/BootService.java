@@ -20,17 +20,23 @@
 package com.github.perftool.storage.service;
 
 
+import com.github.perftool.storage.common.config.CommonConfig;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.service.MetricsService;
+import com.github.perftool.storage.common.utils.IDUtils;
 import com.github.perftool.storage.config.StorageConfig;
 import com.github.perftool.storage.mysql.service.MysqlBootService;
 import com.github.perftool.storage.redis.service.RedisBootService;
 import com.github.perftool.storage.s3.service.S3BootService;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @Slf4j
@@ -38,6 +44,9 @@ public class BootService {
 
     @Autowired
     private StorageConfig storageConfig;
+
+    @Autowired
+    private CommonConfig commonConfig;
 
     @Autowired
     private MysqlBootService mysqlBootService;
@@ -55,13 +64,23 @@ public class BootService {
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
         MetricFactory metricFactory = metricsService.acquireMetricFactory(storageConfig.storageType);
+        List<String> keys = IDUtils.getTargetIds(commonConfig.dataSetSize);
+        ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("perf-storage-init"));
+        executorService.execute(() -> BootService.this.initAsync(metricFactory, keys));
+    }
+
+    /**
+     * use init async to let the springboot framework run
+     */
+    public void initAsync(MetricFactory metricFactory, List<String> keys) {
         switch (storageConfig.storageType) {
             case DUMMY -> log.info("dummy storage");
-            case MYSQL -> mysqlBootService.boot(metricFactory);
-            case REDIS -> redisBootService.boot(metricFactory);
-            case S3 -> s3BootService.boot(metricFactory);
+            case MYSQL -> mysqlBootService.boot(metricFactory, keys);
+            case REDIS -> redisBootService.boot(metricFactory, keys);
+            case S3 -> s3BootService.boot(metricFactory, keys);
             default -> {
             }
         }
     }
+
 }
