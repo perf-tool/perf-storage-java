@@ -20,6 +20,8 @@
 package com.github.perftool.storage.service;
 
 
+import com.github.perftool.storage.common.metrics.MetricFactory;
+import com.github.perftool.storage.common.service.MetricsService;
 import com.github.perftool.storage.config.StorageConfig;
 import com.github.perftool.storage.mysql.service.MysqlBootService;
 import com.github.perftool.storage.redis.service.RedisBootService;
@@ -46,14 +48,18 @@ public class BootService {
     @Autowired
     private S3BootService s3BootService;
 
+    @Autowired
+    private MetricsService metricsService;
+
     @PostConstruct
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
+        MetricFactory metricFactory = metricsService.acquireMetricFactory(storageConfig.storageType);
         switch (storageConfig.storageType) {
             case DUMMY -> log.info("dummy storage");
-            case MYSQL -> mysqlBootService.boot();
-            case REDIS -> redisBootService.boot();
-            case S3 -> s3BootService.boot();
+            case MYSQL -> mysqlBootService.boot(metricFactory);
+            case REDIS -> redisBootService.boot(metricFactory);
+            case S3 -> s3BootService.boot(metricFactory);
             default -> {
             }
         }

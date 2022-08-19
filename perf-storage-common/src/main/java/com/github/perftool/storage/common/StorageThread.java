@@ -20,9 +20,13 @@
 package com.github.perftool.storage.common;
 
 import com.github.perftool.storage.common.config.CommonConfig;
+import com.github.perftool.storage.common.metrics.MetricBean;
+import com.github.perftool.storage.common.metrics.MetricFactory;
+import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -33,11 +37,23 @@ public abstract class StorageThread extends Thread {
 
     private final RateLimiter rateLimiter;
 
+    protected MetricBean insertMetricBean;
+
+    protected MetricBean deleteMetricBean;
+
+    protected MetricBean updateMetricBean;
+
+    protected MetricBean readMetricBean;
+
     public List<String> initIds;
 
-    public StorageThread(CommonConfig commonConfig, List<String> initIds) {
-        this.rateLimiter = RateLimiter.create(commonConfig.threadRateLimit);
+    public StorageThread(CommonConfig commonConfig, MetricFactory metricFactory, List<String> initIds) {
         this.commonConfig = commonConfig;
+        this.rateLimiter = RateLimiter.create(commonConfig.threadRateLimit);
+        this.insertMetricBean = metricFactory.newMetricBean(OperationType.INSERT);
+        this.deleteMetricBean = metricFactory.newMetricBean(OperationType.DELETE);
+        this.updateMetricBean = metricFactory.newMetricBean(OperationType.UPDATE);
+        this.readMetricBean = metricFactory.newMetricBean(OperationType.READ);
         this.initIds = initIds;
     }
 

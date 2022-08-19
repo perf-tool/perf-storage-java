@@ -17,4 +17,4 @@
  * under the License.
  */
 
-package com.github.perftool.storage.module;
+package com.github.perftool.storage.common.service;

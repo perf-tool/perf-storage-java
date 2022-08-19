@@ -17,18 +17,27 @@
  * under the License.
  */
 
-package com.github.perftool.storage.config;
+package com.github.perftool.storage.common.metrics;
 
 import com.github.perftool.storage.common.config.StorageType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import com.github.perftool.storage.common.module.OperationType;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 
-@Component
-@Configuration
-public class StorageConfig {
+@Slf4j
+public class MetricFactory {
 
-    @Value("${STORAGE_TYPE:DUMMY}")
-    public StorageType storageType;
+    private final MeterRegistry meterRegistry;
+
+    private final StorageType storageType;
+
+    public MetricFactory(MeterRegistry meterRegistry, StorageType storageType) {
+        this.meterRegistry = meterRegistry;
+        this.storageType = storageType;
+    }
+
+    public MetricBean newMetricBean(OperationType operationType) {
+        return new MetricBean(meterRegistry, storageType, operationType);
+    }
 
 }

@@ -20,8 +20,10 @@
 package com.github.perftool.storage.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.github.perftool.storage.common.StorageThread;
+import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.s3.config.S3Config;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +39,8 @@ public class S3Operations extends StorageThread {
     private final S3Config s3Config;
     private final AmazonS3 s3Client;
 
-    public S3Operations(S3Config s3Config, AmazonS3 s3Client, List<String> keys) {
-        super(s3Config, keys);
+    public S3Operations(S3Config s3Config, MetricFactory metricFactory, AmazonS3 s3Client, List<String> keys) {
+        super(s3Config, metricFactory, keys);
         this.s3Config = s3Config;
         this.s3Client = s3Client;
     }

@@ -17,18 +17,4 @@
  * under the License.
  */
 
-package com.github.perftool.storage.config;
-
-import com.github.perftool.storage.common.config.StorageType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
-@Component
-@Configuration
-public class StorageConfig {
-
-    @Value("${STORAGE_TYPE:DUMMY}")
-    public StorageType storageType;
-
-}
+package com.github.perftool.storage.common.metrics;
