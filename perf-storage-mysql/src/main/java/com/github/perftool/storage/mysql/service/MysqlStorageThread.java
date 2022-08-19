@@ -19,7 +19,7 @@
 
 package com.github.perftool.storage.mysql.service;
 
-import com.github.perftool.storage.common.StorageThread;
+import com.github.perftool.storage.common.AbstractStorageThread;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.common.utils.RandomUtils;
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
 
 
 @Slf4j
-public class MysqlOperations extends StorageThread {
+public class MysqlStorageThread extends AbstractStorageThread {
 
     private final ConcurrentMap<String, String> cachedStatements = new ConcurrentHashMap<>();
     private final DefaultDBFlavor defaultDBFlavor;
@@ -47,8 +47,8 @@ public class MysqlOperations extends StorageThread {
 
     private final int tableIdx;
 
-    public MysqlOperations(DataSource dataSource, MetricFactory metricFactory,
-                           MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
+    public MysqlStorageThread(DataSource dataSource, MetricFactory metricFactory,
+                              MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
         super(mysqlConfig, metricFactory, ids);
         this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;

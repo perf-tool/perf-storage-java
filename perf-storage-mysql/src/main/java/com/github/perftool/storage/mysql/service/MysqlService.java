@@ -51,13 +51,13 @@ public class MysqlService {
     public void presetData(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
-            this.initData(new MysqlOperations(dataSource, metricFactory, mysqlConfig, keys, i));
+            this.initData(new MysqlStorageThread(dataSource, metricFactory, mysqlConfig, keys, i));
         }
     }
 
     public void boot(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < mysqlConfig.threadNum; i++) {
-            new MysqlOperations(dataSource, metricFactory, mysqlConfig,
+            new MysqlStorageThread(dataSource, metricFactory, mysqlConfig,
                     keys, RandomUtils.randomElem(mysqlConfig.tableCount)).start();
         }
     }
@@ -90,8 +90,8 @@ public class MysqlService {
         }
     }
 
-    private void initData(MysqlOperations mysqlOperations) {
-        mysqlOperations.initIds.forEach(mysqlOperations::insertData);
+    private void initData(MysqlStorageThread mysqlStorageThread) {
+        mysqlStorageThread.initIds.forEach(mysqlStorageThread::insertData);
     }
 
 }

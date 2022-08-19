@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public abstract class StorageThread extends Thread {
+public abstract class AbstractStorageThread extends Thread {
 
     private final CommonConfig commonConfig;
 
@@ -47,7 +47,7 @@ public abstract class StorageThread extends Thread {
 
     public List<String> initIds;
 
-    public StorageThread(CommonConfig commonConfig, MetricFactory metricFactory, List<String> initIds) {
+    public AbstractStorageThread(CommonConfig commonConfig, MetricFactory metricFactory, List<String> initIds) {
         this.commonConfig = commonConfig;
         this.rateLimiter = RateLimiter.create(commonConfig.threadRateLimit);
         this.insertMetricBean = metricFactory.newMetricBean(OperationType.INSERT);
