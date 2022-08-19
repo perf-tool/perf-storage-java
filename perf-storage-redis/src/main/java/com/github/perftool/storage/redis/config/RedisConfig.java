@@ -31,14 +31,14 @@ public class RedisConfig extends CommonConfig {
     @Value("${REDIS_DATABASE:0}")
     public int database;
 
-    @Value("${REDIS_HOST:localhost}")
-    public String host;
+    @Value("${REDIS_CLUSTER_NODES_URL:localhost:6379}")
+    public String clusterNodeUrl;
 
     @Value("${REDIS_PASSWORD:}")
     public String password;
 
-    @Value("${REDIS_PORT:6379}")
-    public int port;
+    @Value("${REDIS_USER}")
+    public String user;
 
     @Value("${REDIS_TIMEOUT:5000}")
     public long timeout;
@@ -54,5 +54,8 @@ public class RedisConfig extends CommonConfig {
 
     @Value("${LETTUCE_POOL_MAX_ACTIVE:-1}")
     public int maxActive;
+
+    @Value("${REDIS_CLUSTER_ENABLE:true}")
+    public boolean redisClusterEnable;
 
 }
