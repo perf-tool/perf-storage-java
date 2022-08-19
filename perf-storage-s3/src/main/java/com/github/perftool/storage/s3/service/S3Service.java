@@ -29,11 +29,17 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.s3.config.S3Config;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class S3Service {
 
@@ -50,8 +56,16 @@ public class S3Service {
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(s3Config.presetThreadNum);
         S3StorageThread s3StorageThread = new S3StorageThread(s3Config, metricFactory, s3Client, keys);
-        keys.forEach(s3StorageThread::insertData);
+        List<Callable<Object>> callableList =
+                keys.stream().map(s -> Executors.callable(() -> s3StorageThread.insertData(s)))
+                        .collect(Collectors.toList());
+        try {
+            threadPool.invokeAll(callableList);
+        } catch (InterruptedException e) {
+            log.error("preset s3 data failed ", e);
+        }
     }
 
     public void boot(MetricFactory metricFactory, List<String> keys) {

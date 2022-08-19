@@ -37,15 +37,15 @@ public abstract class AbstractStorageThread extends Thread {
 
     private final RateLimiter rateLimiter;
 
-    protected MetricBean insertMetricBean;
+    protected final MetricBean insertMetricBean;
 
-    protected MetricBean deleteMetricBean;
+    protected final MetricBean deleteMetricBean;
 
-    protected MetricBean updateMetricBean;
+    protected final MetricBean updateMetricBean;
 
-    protected MetricBean readMetricBean;
+    protected final MetricBean readMetricBean;
 
-    public List<String> initIds;
+    public final List<String> initIds;
 
     public AbstractStorageThread(CommonConfig commonConfig, MetricFactory metricFactory, List<String> initIds) {
         this.commonConfig = commonConfig;

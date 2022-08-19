@@ -20,7 +20,6 @@
 package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.metrics.MetricFactory;
-import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
 import com.github.perftool.storage.mysql.constant.Constants;
 import com.zaxxer.hikari.HikariConfig;
@@ -34,6 +33,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -46,19 +49,38 @@ public class MysqlService {
 
     public void initDatasource() {
         this.dataSource = createDatasource();
+        for (int i = 0; i < mysqlConfig.tableCount; i++) {
+            this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
+        }
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
-            this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
-            this.initData(new MysqlStorageThread(dataSource, metricFactory, mysqlConfig, keys, i));
+            this.presetData(metricFactory, keys, i);
         }
     }
 
+    private void presetData(MetricFactory metricFactory, List<String> keys, int tableIdx) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(mysqlConfig.presetThreadNum);
+        MysqlStorageThread mysqlStorageThread =
+                new MysqlStorageThread(dataSource, metricFactory, mysqlConfig, keys, tableIdx);
+        List<Callable<Object>> callableList =
+                keys.stream().map(s -> Executors.callable(() -> mysqlStorageThread.insertData(s)))
+                        .collect(Collectors.toList());
+        try {
+            threadPool.invokeAll(callableList);
+        } catch (InterruptedException e) {
+            log.error("preset s3 data failed ", e);
+        }
+        keys.forEach(mysqlStorageThread::insertData);
+    }
+
     public void boot(MetricFactory metricFactory, List<String> keys) {
-        for (int i = 0; i < mysqlConfig.threadNum; i++) {
-            new MysqlStorageThread(dataSource, metricFactory, mysqlConfig,
-                    keys, RandomUtils.randomElem(mysqlConfig.tableCount)).start();
+        for (int i = 0; i < mysqlConfig.tableCount; i++) {
+            for (int j = 0; j < mysqlConfig.threadNum; j++) {
+                new MysqlStorageThread(dataSource, metricFactory, mysqlConfig,
+                        keys, i).start();
+            }
         }
     }
 
@@ -88,10 +110,6 @@ public class MysqlService {
         } catch (SQLException e) {
             log.error("create table fail. perf_table{}", tableName, e);
         }
-    }
-
-    private void initData(MysqlStorageThread mysqlStorageThread) {
-        mysqlStorageThread.initIds.forEach(mysqlStorageThread::insertData);
     }
 
 }
