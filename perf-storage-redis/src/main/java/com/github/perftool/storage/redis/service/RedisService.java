@@ -77,7 +77,6 @@ public class RedisService {
         } catch (InterruptedException e) {
             log.error("preset s3 data failed ", e);
         }
-        keys.forEach(redisStorageThread::insertData);
     }
 
     public void boot(MetricFactory metricFactory, List<String> keys) {
