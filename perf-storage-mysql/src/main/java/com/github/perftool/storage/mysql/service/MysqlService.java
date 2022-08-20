@@ -104,7 +104,10 @@ public class MysqlService {
             for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
                 sql.append("field").append(i).append(" varchar(").append(mysqlConfig.fieldLength).append("),");
             }
-            sql.append("field").append(mysqlConfig.fieldCount - 1).append(" varchar(").append(mysqlConfig.fieldLength).append(") ");
+            sql.append("field")
+                    .append(mysqlConfig.fieldCount - 1)
+                    .append(" varchar(")
+                    .append(mysqlConfig.fieldLength).append(") ");
             sql.append(" )");
             stmt.execute(sql.toString());
         } catch (SQLException e) {

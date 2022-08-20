@@ -58,4 +58,7 @@ public class RedisConfig extends CommonConfig {
     @Value("${REDIS_CLUSTER_ENABLE:true}")
     public boolean redisClusterEnable;
 
+    @Value("${DATA_SIZE:1024}")
+    public int dataSize;
+
 }

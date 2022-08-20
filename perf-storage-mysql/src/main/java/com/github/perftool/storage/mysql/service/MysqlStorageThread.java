@@ -68,6 +68,7 @@ public class MysqlStorageThread extends AbstractStorageThread {
 
     @Override
     public void insertData(String id) {
+        long start = System.currentTimeMillis();
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements
@@ -78,13 +79,16 @@ public class MysqlStorageThread extends AbstractStorageThread {
                 stmt.setString(i, RandomUtils.getRandomStr(mysqlConfig.fieldValueLength));
             }
             stmt.executeUpdate();
+            insertMetricBean.success(System.currentTimeMillis() - start);
         } catch (SQLException e) {
-            log.error("insert data fail. ", e);
+            insertMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("mysql insert data fail. ", e);
         }
     }
 
     @Override
     public void updateData(String id) {
+        long start = System.currentTimeMillis();
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements
@@ -95,13 +99,16 @@ public class MysqlStorageThread extends AbstractStorageThread {
             }
             stmt.setString(mysqlConfig.updateFieldCount + 1, id);
             stmt.executeUpdate();
+            updateMetricBean.success(System.currentTimeMillis() - start);
         } catch (SQLException e) {
-            log.error("update data fail. ", e);
+            updateMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("mysql update data fail. ", e);
         }
     }
 
     @Override
     public void readData(String id) {
+        long start = System.currentTimeMillis();
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements
@@ -109,13 +116,16 @@ public class MysqlStorageThread extends AbstractStorageThread {
         ) {
             stmt.setString(1, id);
             stmt.execute();
+            readMetricBean.success(System.currentTimeMillis() - start);
         } catch (SQLException e) {
-            log.error("read data fail. ", e);
+            readMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("mysql read data fail. ", e);
         }
     }
 
     @Override
     public void deleteData(String id) {
+        long start = System.currentTimeMillis();
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(cachedStatements
@@ -127,7 +137,9 @@ public class MysqlStorageThread extends AbstractStorageThread {
             }
             stmt.setString(1, id);
             stmt.executeUpdate();
+            deleteMetricBean.success(System.currentTimeMillis() - start);
         } catch (SQLException e) {
+            deleteMetricBean.fail(System.currentTimeMillis() - start);
             log.error("delete data fail. ", e);
         }
     }

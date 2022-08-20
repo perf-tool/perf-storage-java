@@ -21,6 +21,7 @@ package com.github.perftool.storage.redis.service;
 
 import com.github.perftool.storage.common.AbstractStorageThread;
 import com.github.perftool.storage.common.metrics.MetricFactory;
+import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,21 +44,55 @@ public class RedisStorageThread extends AbstractStorageThread {
 
     @Override
     public void insertData(String id) {
-        redisTemplate.opsForValue().set(id, id);
+        long start = System.currentTimeMillis();
+        try {
+            redisTemplate.opsForValue().set(id, RandomUtils.getRandomStr(redisConfig.dataSize));
+            insertMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            insertMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("redis insert data error ", e);
+        }
     }
 
     @Override
     public void updateData(String id) {
-        redisTemplate.opsForValue().set(id, id + "-update");
+        long start = System.currentTimeMillis();
+        try {
+            redisTemplate.opsForValue().set(id, RandomUtils.getRandomStr(redisConfig.dataSize));
+            updateMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            updateMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("redis update data error ", e);
+        }
+
     }
 
     @Override
     public void readData(String id) {
-        redisTemplate.opsForValue().get(id);
+        long start = System.currentTimeMillis();
+        try {
+            redisTemplate.opsForValue().get(id);
+            readMetricBean.success(System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            readMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("redis read data error ", e);
+        }
     }
 
     @Override
     public void deleteData(String id) {
-        redisTemplate.delete(id);
+        long start = System.currentTimeMillis();
+        try {
+            Boolean isOk = redisTemplate.delete(id);
+            if (Boolean.TRUE.equals(isOk)) {
+                deleteMetricBean.success(System.currentTimeMillis() - start);
+            } else {
+                deleteMetricBean.fail(System.currentTimeMillis() - start);
+            }
+        } catch (Exception e) {
+            deleteMetricBean.fail(System.currentTimeMillis() - start);
+            log.error("redis delete data error ", e);
+        }
+
     }
 }
