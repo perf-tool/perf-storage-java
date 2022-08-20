@@ -72,7 +72,6 @@ public class MysqlService {
         } catch (InterruptedException e) {
             log.error("preset s3 data failed ", e);
         }
-        keys.forEach(mysqlStorageThread::insertData);
     }
 
     public void boot(MetricFactory metricFactory, List<String> keys) {
