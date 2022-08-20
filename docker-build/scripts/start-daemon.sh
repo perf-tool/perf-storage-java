@@ -49,4 +49,17 @@ JVM_OPT="${JVM_OPT} -XX:+DoEscapeAnalysis -XX:ParallelGCThreads=${GC_THREADS} -X
 # gc log option
 JVM_OPT="${JVM_OPT} -Xlog:gc*=info,gc+phases=debug:$PERF_HOME/logs/gc.log:time,uptime:filecount=10,filesize=100M"
 
-java $JAVA_OPT $JVM_OPT -Dlog4j.configurationFile=conf/log4j2.xml -classpath $PERF_HOME/lib/*:$PERF_HOME/perf-storage.jar:$PERF_HOME/conf/*  com.github.perftool.storage.Main >>$PERF_HOME/logs/stdout.log 2>>$PERF_HOME/logs/stderr.log
+# skywalking java agent option
+if [ -n "${SW_AGENT_ENABLE}" ]; then
+  if [ ! -n "${SW_SERVICE_NAME}" ]; then
+    SW_SERVICE_NAME="perf-storage"
+  fi
+  if [ ! -n "${SW_COLLECTOR_URL}" ]; then
+    SW_COLLECTOR_URL="localhost:11800"
+  fi
+  # ignore springmvc agent plugin
+  rm -rf /opt/perf/skywalking-agent/plugins/apm-springmvc-annotation*
+  AGENT_OPT="-javaagent:/opt/perf/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=${SW_SERVICE_NAME} -Dskywalking.collector.backend_service=${SW_COLLECTOR_URL}"
+fi
+
+java $AGENT_OPT $JAVA_OPT $JVM_OPT -Dlog4j.configurationFile=conf/log4j2.xml -classpath $PERF_HOME/lib/*:$PERF_HOME/perf-storage.jar:$PERF_HOME/conf/*  com.github.perftool.storage.Main >>$PERF_HOME/logs/stdout.log 2>>$PERF_HOME/logs/stderr.log
