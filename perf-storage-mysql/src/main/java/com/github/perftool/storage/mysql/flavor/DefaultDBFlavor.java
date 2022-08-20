@@ -37,9 +37,9 @@ public class DefaultDBFlavor extends DBFlavor {
         insertSql.append(tableName);
         insertSql.append(" (id,");
         for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
-            insertSql.append("field" + i + ", ");
+            insertSql.append("field").append(i).append(", ");
         }
-        insertSql.append("field" + (mysqlConfig.fieldCount - 1) + ")");
+        insertSql.append("field").append(mysqlConfig.fieldCount - 1).append(")");
         insertSql.append(" VALUES(?");
         for (int i = 1; i < mysqlConfig.fieldCount; i++) {
             insertSql.append(",?");
@@ -70,9 +70,9 @@ public class DefaultDBFlavor extends DBFlavor {
         update.append(tableName);
         update.append(" SET ");
         for (int i = 1; i < mysqlConfig.updateFieldCount; i++) {
-            update.append("field" + i + " = ?, ");
+            update.append("field").append(i).append(" = ?, ");
         }
-        update.append("field" + mysqlConfig.updateFieldCount + " = ?");
+        update.append("field").append(mysqlConfig.updateFieldCount).append(" = ?");
         update.append(" WHERE ");
         update.append("id");
         update.append(" = ?");

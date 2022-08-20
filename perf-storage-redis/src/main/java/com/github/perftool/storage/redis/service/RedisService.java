@@ -95,8 +95,8 @@ public class RedisService {
         if (redisConfig.redisClusterEnable) {
             RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
             String[] urls = redisConfig.clusterNodeUrl.split(",");
-            for (int i = 0; i < urls.length; i++) {
-                String[] url = urls[i].split(":");
+            for (String s : urls) {
+                String[] url = s.split(":");
                 redisClusterConfiguration.addClusterNode(new RedisNode(url[0], Integer.parseInt(url[1])));
             }
             redisClusterConfiguration.setUsername(redisConfig.user);

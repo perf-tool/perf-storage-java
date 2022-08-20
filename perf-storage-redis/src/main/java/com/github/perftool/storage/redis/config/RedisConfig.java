@@ -37,7 +37,7 @@ public class RedisConfig extends CommonConfig {
     @Value("${REDIS_PASSWORD:}")
     public String password;
 
-    @Value("${REDIS_USER}")
+    @Value("${REDIS_USER:}")
     public String user;
 
     @Value("${REDIS_TIMEOUT:5000}")
