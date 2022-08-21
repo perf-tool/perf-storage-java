@@ -37,13 +37,16 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,6 +67,17 @@ public class RedisService {
 
     public void initDatasource() {
         this.redisTemplate = createRedisTemplate();
+    }
+
+    public void readTotalDBData(Set<String> keysTmp) {
+        Cursor<String> scan = this.redisTemplate.scan(ScanOptions.
+                scanOptions()
+                .count(redisConfig.dataSetSize)
+                .match("*")
+                .build());
+        while (scan.hasNext()) {
+            keysTmp.add(scan.next());
+        }
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {

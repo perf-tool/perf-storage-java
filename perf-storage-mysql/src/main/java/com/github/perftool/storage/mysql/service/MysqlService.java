@@ -30,9 +30,12 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,6 +60,21 @@ public class MysqlService {
     public void presetData(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             this.presetData(metricFactory, keys, i);
+        }
+    }
+
+    public void readTotalDBData(Set<String> ids) {
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement stms = conn.prepareStatement("select id from "
+                        + Constants.DEFAULT_TABLE_NAME_PREFIX + "0")
+        ) {
+            ResultSet ret = stms.executeQuery();
+            while (ret.next()) {
+                ids.add(ret.getString("id"));
+            }
+        } catch (SQLException e) {
+            log.error("read db data fail. ", e);
         }
     }
 

@@ -27,6 +27,8 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ListObjectsV2Result;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.s3.config.S3Config;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,6 +55,14 @@ public class S3Service {
         this.s3Client = createAmazonS3();
         if (!s3Client.doesBucketExistV2(s3Config.bucketName)) {
             s3Client.createBucket(s3Config.bucketName);
+        }
+    }
+
+    public void readTotalDBData(Set<String> keys) {
+        ListObjectsV2Result ret = s3Client.listObjectsV2(s3Config.bucketName);
+        List<S3ObjectSummary> summaries = ret.getObjectSummaries();
+        for (S3ObjectSummary summary : summaries) {
+            keys.add(summary.getKey());
         }
     }
 
