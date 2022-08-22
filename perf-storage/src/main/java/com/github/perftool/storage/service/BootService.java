@@ -35,7 +35,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -65,16 +68,15 @@ public class BootService {
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
         MetricFactory metricFactory = metricsService.acquireMetricFactory(storageConfig.storageType);
-        List<String> keys = IDUtils.getTargetIds(commonConfig.dataSetSize);
         ExecutorService executorService =
                 Executors.newSingleThreadExecutor(new DefaultThreadFactory("perf-storage-init"));
-        executorService.execute(() -> BootService.this.initAsync(metricFactory, keys));
+        executorService.execute(() -> BootService.this.initAsync(metricFactory));
     }
 
     /**
      * use init async to let the springboot framework run
      */
-    public void initAsync(MetricFactory metricFactory, List<String> keys) {
+    public void initAsync(MetricFactory metricFactory) {
         switch (storageConfig.storageType) {
             case DUMMY -> log.info("dummy storage");
             case MYSQL -> mysqlService.initDatasource();
@@ -83,14 +85,31 @@ public class BootService {
             default -> {
             }
         }
+
+        Set<String> nowKeys = new HashSet<>();
         switch (storageConfig.storageType) {
             case DUMMY -> log.info("dummy storage");
-            case MYSQL -> mysqlService.presetData(metricFactory, keys);
-            case REDIS -> redisService.presetData(metricFactory, keys);
-            case S3 -> s3Service.presetData(metricFactory, keys);
+            case MYSQL -> nowKeys = mysqlService.listKeys();
+            case REDIS -> nowKeys = redisService.listKeys();
+            case S3 -> nowKeys = s3Service.listKeys();
             default -> {
             }
         }
+
+        List<String> keys = new ArrayList<>();
+        int needDataSetSize = commonConfig.dataSetSize - nowKeys.size();
+        if (needDataSetSize > 0) {
+            keys = IDUtils.getTargetIds(needDataSetSize);
+            switch (storageConfig.storageType) {
+                case DUMMY -> log.info("dummy storage");
+                case MYSQL -> mysqlService.presetData(metricFactory, keys);
+                case REDIS -> redisService.presetData(metricFactory, keys);
+                case S3 -> s3Service.presetData(metricFactory, keys);
+                default -> {
+                }
+            }
+        }
+        keys.addAll(nowKeys);
         if (storageConfig.storageType == StorageType.DUMMY) {
             log.info("dummy storage");
         } else if (storageConfig.storageType == StorageType.MYSQL) {
