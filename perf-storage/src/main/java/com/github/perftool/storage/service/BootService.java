@@ -86,18 +86,18 @@ public class BootService {
             }
         }
 
-        Set<String> tmpSet = new HashSet<>();
+        Set<String> nowKeys = new HashSet<>();
         switch (storageConfig.storageType) {
             case DUMMY -> log.info("dummy storage");
-            case MYSQL -> mysqlService.readTotalDBData(tmpSet);
-            case REDIS -> redisService.readTotalDBData(tmpSet);
-            case S3 -> s3Service.readTotalDBData(tmpSet);
+            case MYSQL -> nowKeys = mysqlService.listKeys();
+            case REDIS -> nowKeys = redisService.listKeys();
+            case S3 -> nowKeys = s3Service.listKeys();
             default -> {
             }
         }
 
         List<String> keys = new ArrayList<>();
-        int needDataSetSize = commonConfig.dataSetSize - tmpSet.size();
+        int needDataSetSize = commonConfig.dataSetSize - nowKeys.size();
         if (needDataSetSize > 0) {
             keys = IDUtils.getTargetIds(needDataSetSize);
             switch (storageConfig.storageType) {
@@ -109,7 +109,7 @@ public class BootService {
                 }
             }
         }
-        keys.addAll(tmpSet);
+        keys.addAll(nowKeys);
         if (storageConfig.storageType == StorageType.DUMMY) {
             log.info("dummy storage");
         } else if (storageConfig.storageType == StorageType.MYSQL) {

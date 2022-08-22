@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -63,19 +64,21 @@ public class MysqlService {
         }
     }
 
-    public void readTotalDBData(Set<String> ids) {
+    public Set<String> listKeys() {
+        Set<String> set = new HashSet<>();
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement stms = conn.prepareStatement("select id from "
+                PreparedStatement stmt = conn.prepareStatement("select id from "
                         + Constants.DEFAULT_TABLE_NAME_PREFIX + "0")
         ) {
-            ResultSet ret = stms.executeQuery();
+            ResultSet ret = stmt.executeQuery();
             while (ret.next()) {
-                ids.add(ret.getString("id"));
+                set.add(ret.getString("id"));
             }
         } catch (SQLException e) {
             log.error("read db data fail. ", e);
         }
+        return set;
     }
 
     private void presetData(MetricFactory metricFactory, List<String> keys, int tableIdx) {

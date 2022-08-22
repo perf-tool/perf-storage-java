@@ -45,6 +45,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -69,15 +70,17 @@ public class RedisService {
         this.redisTemplate = createRedisTemplate();
     }
 
-    public void readTotalDBData(Set<String> keysTmp) {
+    public Set<String> listKeys() {
+        Set<String> set = new HashSet<>();
         Cursor<String> scan = this.redisTemplate.scan(ScanOptions.
                 scanOptions()
                 .count(redisConfig.dataSetSize)
                 .match("*")
                 .build());
         while (scan.hasNext()) {
-            keysTmp.add(scan.next());
+            set.add(scan.next());
         }
+        return set;
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {

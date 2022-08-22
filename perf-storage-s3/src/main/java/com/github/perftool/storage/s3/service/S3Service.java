@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -58,12 +59,14 @@ public class S3Service {
         }
     }
 
-    public void readTotalDBData(Set<String> keys) {
+    public Set<String> listKeys() {
+        Set<String> set = new HashSet<>();
         ListObjectsV2Result ret = s3Client.listObjectsV2(s3Config.bucketName);
         List<S3ObjectSummary> summaries = ret.getObjectSummaries();
         for (S3ObjectSummary summary : summaries) {
-            keys.add(summary.getKey());
+            set.add(summary.getKey());
         }
+        return set;
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
