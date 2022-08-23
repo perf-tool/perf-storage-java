@@ -33,6 +33,9 @@ public class S3Config extends CommonConfig {
 
     @Value("${AWS_SECRET_KEY:password}")
     public String secretKey;
+    
+    @Value("${SIGNER_OVERRIDE_TYPE:AWSS3V4SignerType}")
+    public String signerOverrideType;
 
     @Value("${BUCKET_NAME:testbucket}")
     public String bucketName;
