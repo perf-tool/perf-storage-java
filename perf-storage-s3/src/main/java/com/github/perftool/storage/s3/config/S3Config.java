@@ -49,6 +49,9 @@ public class S3Config extends CommonConfig {
     @Value("${DATA_SIZE:10240}")
     public int dataSize;
 
+    @Value("${SIGNER_OVERRIDE_TYPE:AWSS3V4SignerType}")
+    public String signerOverrideType;
+
 }
 
 

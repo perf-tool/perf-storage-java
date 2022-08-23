@@ -93,7 +93,7 @@ public class S3Service {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setConnectionTimeout(s3Config.awsConnectTimeoutMs);
         clientConfiguration.setRequestTimeout(s3Config.awsRequestTimeout);
-        clientConfiguration.setSignerOverride("AWSS3V4SignerType");
+        clientConfiguration.setSignerOverride(s3Config.signerOverrideType);
         return AmazonS3ClientBuilder
                 .standard()
                 .withEndpointConfiguration(
