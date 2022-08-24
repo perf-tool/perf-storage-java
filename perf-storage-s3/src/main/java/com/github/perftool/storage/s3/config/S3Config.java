@@ -34,10 +34,10 @@ public class S3Config extends CommonConfig {
     @Value("${AWS_SECRET_KEY:password}")
     public String secretKey;
     
-    @Value("${SIGNER_OVERRIDE_TYPE:AWSS3V4SignerType}")
+    @Value("${AWS_SIGNER_OVERRIDE_TYPE:AWSS3V4SignerType}")
     public String signerOverrideType;
 
-    @Value("${BUCKET_NAME:testbucket}")
+    @Value("${S3_BUCKET_NAME:testbucket}")
     public String bucketName;
 
     @Value("${AWS_SERVICE_ENDPOINT:http://localhost:9000}")
@@ -49,7 +49,7 @@ public class S3Config extends CommonConfig {
     @Value("${AWS_REQUEST_TIMEOUT_MS:15000}")
     public int awsRequestTimeout;
 
-    @Value("${DATA_SIZE:10240}")
+    @Value("${S3_DATA_SIZE:10240}")
     public int dataSize;
 
 }

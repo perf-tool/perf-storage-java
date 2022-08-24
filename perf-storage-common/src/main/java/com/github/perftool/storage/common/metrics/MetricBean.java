@@ -32,19 +32,19 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class MetricBean {
 
-    private static final String COUNT_NAME = "pf_storage";
+    private static final String COUNT_NAME = "perf_storage";
 
-    private static final String SUCCESS_COUNT_NAME = "pf_storage_success";
+    private static final String SUCCESS_COUNT_NAME = "perf_storage_success";
 
-    private static final String FAIL_COUNT_NAME = "pf_storage_fail";
+    private static final String FAIL_COUNT_NAME = "perf_storage_fail";
 
-    private static final String SUCCESS_LATENCY_SUMMARY_NAME = "pf_storage_success_latency_summary";
+    private static final String SUCCESS_LATENCY_SUMMARY_NAME = "perf_storage_success_latency_summary";
 
-    private static final String FAIL_LATENCY_SUMMARY_NAME = "pf_storage_fail_latency_summary";
+    private static final String FAIL_LATENCY_SUMMARY_NAME = "perf_storage_fail_latency_summary";
 
-    private static final String SUCCESS_LATENCY_TIMER_NAME = "pf_storage_success_latency_timer";
+    private static final String SUCCESS_LATENCY_TIMER_NAME = "perf_storage_success_latency_timer";
 
-    private static final String FAIL_LATENCY_TIMER_NAME = "pf_storage_fail_latency_timer";
+    private static final String FAIL_LATENCY_TIMER_NAME = "perf_storage_fail_latency_timer";
 
     private final Counter counter;
 
