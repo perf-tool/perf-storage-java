@@ -60,10 +60,10 @@ public class MetricBean {
 
     private final Timer failTimer;
 
-    public MetricBean(MeterRegistry meterRegistry, StorageType produceType, OperationType operationType) {
+    public MetricBean(MeterRegistry meterRegistry, StorageType storageType, OperationType operationType) {
         String[] tags = new String[]{
-                "produce_type",
-                produceType.toString(),
+                "storage_type",
+                storageType.toString(),
                 "operation_type",
                 operationType.toString()
         };

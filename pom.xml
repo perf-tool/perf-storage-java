@@ -28,6 +28,7 @@
         <module>perf-storage-cassandra</module>
         <module>perf-storage-common</module>
         <module>perf-storage-etcd</module>
+        <module>perf-storage-minio</module>
         <module>perf-storage-mysql</module>
         <module>perf-storage-redis</module>
         <module>perf-storage-s3</module>
