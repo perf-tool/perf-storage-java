@@ -60,7 +60,6 @@ public class DefaultDBFlavor extends DBFlavor {
         deleteSql.append(" WHERE ");
         deleteSql.append("id");
         deleteSql.append(" = ?");
-        System.out.println(deleteSql);
         return deleteSql.toString();
     }
 
@@ -76,6 +75,7 @@ public class DefaultDBFlavor extends DBFlavor {
         update.append(" WHERE ");
         update.append("id");
         update.append(" = ?");
+
         return update.toString();
     }
 
