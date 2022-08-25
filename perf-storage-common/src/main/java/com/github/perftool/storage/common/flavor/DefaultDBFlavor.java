@@ -17,18 +17,18 @@
  * under the License.
  */
 
-package com.github.perftool.storage.mysql.flavor;
+package com.github.perftool.storage.common.flavor;
 
-import com.github.perftool.storage.mysql.config.MysqlConfig;
+import com.github.perftool.storage.common.config.QLCommonConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DefaultDBFlavor extends DBFlavor {
 
-    private final MysqlConfig mysqlConfig;
+    private final QLCommonConfig qlCommonConfig;
 
-    public DefaultDBFlavor(MysqlConfig mysqlConfig) {
-        this.mysqlConfig = mysqlConfig;
+    public DefaultDBFlavor(QLCommonConfig qlCommonConfig) {
+        this.qlCommonConfig = qlCommonConfig;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class DefaultDBFlavor extends DBFlavor {
         StringBuilder insertSql = new StringBuilder("INSERT INTO ");
         insertSql.append(tableName);
         insertSql.append(" (id,");
-        for (int i = 1; i < mysqlConfig.fieldCount - 1; i++) {
+        for (int i = 1; i < qlCommonConfig.fieldCount - 1; i++) {
             insertSql.append("field").append(i).append(", ");
         }
-        insertSql.append("field").append(mysqlConfig.fieldCount - 1).append(")");
+        insertSql.append("field").append(qlCommonConfig.fieldCount - 1).append(")");
         insertSql.append(" VALUES(?");
-        for (int i = 1; i < mysqlConfig.fieldCount; i++) {
+        for (int i = 1; i < qlCommonConfig.fieldCount; i++) {
             insertSql.append(",?");
         }
         insertSql.append(")");
@@ -69,14 +69,24 @@ public class DefaultDBFlavor extends DBFlavor {
         StringBuilder update = new StringBuilder("UPDATE ");
         update.append(tableName);
         update.append(" SET ");
-        for (int i = 1; i < mysqlConfig.updateFieldCount; i++) {
+        for (int i = 1; i < qlCommonConfig.updateFieldCount; i++) {
             update.append("field").append(i).append(" = ?, ");
         }
-        update.append("field").append(mysqlConfig.updateFieldCount).append(" = ?");
+        update.append("field").append(qlCommonConfig.updateFieldCount).append(" = ?");
         update.append(" WHERE ");
         update.append("id");
         update.append(" = ?");
         return update.toString();
+    }
+
+    @Override
+    public String createDBStatement(String dbName) {
+        return null;
+    }
+
+    @Override
+    public String createTableStatement(String tableName) {
+        return null;
     }
 
 }

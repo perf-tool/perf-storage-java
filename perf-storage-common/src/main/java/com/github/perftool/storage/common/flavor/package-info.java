@@ -17,4 +17,4 @@
  * under the License.
  */
 
-package com.github.perftool.storage.mysql.constant;
+package com.github.perftool.storage.common.flavor;

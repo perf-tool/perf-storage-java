@@ -17,33 +17,4 @@
  * under the License.
  */
 
-package com.github.perftool.storage.mysql.config;
-
-import com.github.perftool.storage.common.config.QLCommonConfig;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
-@Configuration
-@Component
-public class MysqlConfig extends QLCommonConfig {
-
-    @Value("${MYSQL_HOST:localhost}")
-    public String host;
-
-    @Value("${MYSQL_PORT:3306}")
-    public int port;
-
-    @Value("${MYSQL_DB_NAME:}")
-    public String dbName;
-
-    @Value("${MYSQL_TABLE_COUNT:5}")
-    public int tableCount;
-
-    @Value("${MYSQL_USER:}")
-    public String user;
-
-    @Value("${MYSQL_PASSWORD:}")
-    public String password;
-
-}
+package com.github.perftool.storage.controller;
