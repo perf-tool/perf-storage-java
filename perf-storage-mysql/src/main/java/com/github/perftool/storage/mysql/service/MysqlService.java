@@ -21,7 +21,6 @@ package com.github.perftool.storage.mysql.service;
 
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
-import com.github.perftool.storage.mysql.constant.Constants;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +53,7 @@ public class MysqlService {
     public void initDatasource() {
         this.dataSource = createDatasource();
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
-            this.initPerfTable(dataSource, Constants.DEFAULT_TABLE_NAME_PREFIX + i);
+            this.initPerfTable(dataSource, mysqlConfig.tableNamePrefix + i);
         }
     }
 
@@ -69,7 +68,7 @@ public class MysqlService {
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement("select id from "
-                        + Constants.DEFAULT_TABLE_NAME_PREFIX + "0")
+                        + mysqlConfig.tableNamePrefix + "0")
         ) {
             ResultSet ret = stmt.executeQuery();
             while (ret.next()) {

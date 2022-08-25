@@ -16,21 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.perftool.storage.mysql.flavor;
 
-import lombok.extern.slf4j.Slf4j;
+package com.github.perftool.storage.common.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Slf4j
-public abstract class DBFlavor {
+@Configuration
+@Component
+public class QLCommonConfig extends CommonConfig{
 
+    @Value("${FIELDS_COUNT:10}")
+    public int fieldCount;
 
-    public abstract String insertStatement(String tableName);
+    @Value("${UPDATE_FIELDS_COUNT:1}")
+    public int updateFieldCount;
 
-    public abstract String readStatement(String tableName);
+    @Value("${FIELD_LENGTH:100}")
+    public String fieldLength;
 
-    public abstract String deleteStatement(String tableName);
+    @Value("${MAXIMUM_POOL_SIZE:20}")
+    public int maximumPoolSize;
 
-    public abstract String updateStatement(String tableName);
+    @Value("${FIELD_VALUE_LENGTH:1024}")
+    public int fieldValueLength;
 
+    @Value("${TABLE_NAME_PREFIX:perf_table}")
+    public String tableNamePrefix;
 }

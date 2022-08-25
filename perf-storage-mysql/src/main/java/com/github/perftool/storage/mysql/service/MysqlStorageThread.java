@@ -24,8 +24,7 @@ import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.module.OperationType;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.mysql.config.MysqlConfig;
-import com.github.perftool.storage.mysql.constant.Constants;
-import com.github.perftool.storage.mysql.flavor.DefaultDBFlavor;
+import com.github.perftool.storage.mysql.flavor.MysqlFlavor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -41,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
 public class MysqlStorageThread extends AbstractStorageThread {
 
     private final ConcurrentMap<String, String> cachedStatements = new ConcurrentHashMap<>();
-    private final DefaultDBFlavor defaultDBFlavor;
+    private final MysqlFlavor mysqlFlavor;
     private final MysqlConfig mysqlConfig;
     private final DataSource dataSource;
 
@@ -50,19 +49,19 @@ public class MysqlStorageThread extends AbstractStorageThread {
     public MysqlStorageThread(DataSource dataSource, MetricFactory metricFactory,
                               MysqlConfig mysqlConfig, List<String> ids, int tableIdx) {
         super(mysqlConfig, metricFactory, ids);
-        this.defaultDBFlavor = new DefaultDBFlavor(mysqlConfig);
+        this.mysqlFlavor = new MysqlFlavor(mysqlConfig);
         this.mysqlConfig = mysqlConfig;
         this.dataSource = dataSource;
         this.tableIdx = tableIdx;
         for (int i = 0; i < mysqlConfig.tableCount; i++) {
             cachedStatements.putIfAbsent(OperationType.INSERT.name() + i,
-                    defaultDBFlavor.insertStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+                    mysqlFlavor.insertStatement(mysqlConfig.tableNamePrefix + i));
             cachedStatements.putIfAbsent(OperationType.UPDATE.name() + i,
-                    defaultDBFlavor.updateStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+                    mysqlFlavor.updateStatement(mysqlConfig.tableNamePrefix + i));
             cachedStatements.putIfAbsent(OperationType.READ.name() + i,
-                    defaultDBFlavor.readStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+                    mysqlFlavor.readStatement(mysqlConfig.tableNamePrefix + i));
             cachedStatements.putIfAbsent(OperationType.DELETE.name() + i,
-                    defaultDBFlavor.deleteStatement(Constants.DEFAULT_TABLE_NAME_PREFIX + i));
+                    mysqlFlavor.deleteStatement(mysqlConfig.tableNamePrefix + i));
         }
     }
 

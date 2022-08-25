@@ -17,8 +17,30 @@
  * under the License.
  */
 
-package com.github.perftool.storage.mysql.constant;
+package com.github.perftool.storage.mysql.flavor;
 
-public class Constants {
-    public static final String DEFAULT_TABLE_NAME_PREFIX = "perf_table";
+import com.github.perftool.storage.common.flavor.DefaultDBFlavor;
+import com.github.perftool.storage.mysql.config.MysqlConfig;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class MysqlFlavor extends DefaultDBFlavor {
+
+    private final MysqlConfig mysqlConfig;
+
+    public MysqlFlavor(MysqlConfig mysqlConfig) {
+        super(mysqlConfig);
+        this.mysqlConfig = mysqlConfig;
+    }
+
+    @Override
+    public String createDBStatement(String dbName) {
+        return null;
+    }
+
+    @Override
+    public String createTableStatement(String tableName) {
+        return null;
+    }
+
 }

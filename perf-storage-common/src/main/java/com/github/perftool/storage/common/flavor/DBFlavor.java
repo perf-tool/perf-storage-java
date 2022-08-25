@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,34 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.perftool.storage.common.flavor;
 
-package com.github.perftool.storage.mysql.config;
+import lombok.extern.slf4j.Slf4j;
 
-import com.github.perftool.storage.common.config.QLCommonConfig;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
-@Configuration
-@Component
-public class MysqlConfig extends QLCommonConfig {
+@Slf4j
+public abstract class DBFlavor {
 
-    @Value("${MYSQL_HOST:localhost}")
-    public String host;
 
-    @Value("${MYSQL_PORT:3306}")
-    public int port;
+    public abstract String insertStatement(String tableName);
 
-    @Value("${MYSQL_DB_NAME:}")
-    public String dbName;
+    public abstract String readStatement(String tableName);
 
-    @Value("${MYSQL_TABLE_COUNT:5}")
-    public int tableCount;
+    public abstract String deleteStatement(String tableName);
 
-    @Value("${MYSQL_USER:}")
-    public String user;
+    public abstract String updateStatement(String tableName);
 
-    @Value("${MYSQL_PASSWORD:}")
-    public String password;
+    public abstract String createDBStatement(String dbName);
+
+    public abstract String createTableStatement(String tableName);
 
 }
