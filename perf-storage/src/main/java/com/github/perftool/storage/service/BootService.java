@@ -20,6 +20,7 @@
 package com.github.perftool.storage.service;
 
 
+import com.github.perftool.storage.cassandra.service.CassandraBootService;
 import com.github.perftool.storage.common.config.CommonConfig;
 import com.github.perftool.storage.common.config.StorageType;
 import com.github.perftool.storage.common.metrics.MetricFactory;
@@ -64,6 +65,9 @@ public class BootService {
     @Autowired
     private MetricsService metricsService;
 
+    @Autowired
+    private CassandraBootService cassandraBootService;
+
     @PostConstruct
     public void init() {
         log.info("storage type : {}", storageConfig.storageType);
@@ -82,6 +86,7 @@ public class BootService {
             case MYSQL -> mysqlService.initDatasource();
             case REDIS -> redisService.initDatasource();
             case S3 -> s3Service.initDatasource();
+            case CASSANDRA -> cassandraBootService.initDatasource();
             default -> {
             }
         }
@@ -92,10 +97,11 @@ public class BootService {
             case MYSQL -> nowKeys = mysqlService.listKeys();
             case REDIS -> nowKeys = redisService.listKeys();
             case S3 -> nowKeys = s3Service.listKeys();
+            case CASSANDRA -> nowKeys = cassandraBootService.listKeys();
             default -> {
             }
         }
-
+        log.info("the now key : {}", nowKeys);
         List<String> keys = new ArrayList<>();
         int needDataSetSize = commonConfig.dataSetSize - nowKeys.size();
         if (needDataSetSize > 0) {
@@ -105,6 +111,7 @@ public class BootService {
                 case MYSQL -> mysqlService.presetData(metricFactory, keys);
                 case REDIS -> redisService.presetData(metricFactory, keys);
                 case S3 -> s3Service.presetData(metricFactory, keys);
+                case CASSANDRA -> cassandraBootService.presetData(metricFactory, keys);
                 default -> {
                 }
             }
@@ -118,7 +125,10 @@ public class BootService {
             redisService.boot(metricFactory, keys);
         } else if (storageConfig.storageType == StorageType.S3) {
             s3Service.boot(metricFactory, keys);
+        } else if (storageConfig.storageType == StorageType.CASSANDRA) {
+            cassandraBootService.boot(metricFactory, keys);
         }
     }
 
 }
+
