@@ -36,9 +36,6 @@ public class QLCommonConfig extends CommonConfig{
     @Value("${FIELD_LENGTH:100}")
     public String fieldLength;
 
-    @Value("${MAXIMUM_POOL_SIZE:20}")
-    public int maximumPoolSize;
-
     @Value("${FIELD_VALUE_LENGTH:1024}")
     public int fieldValueLength;
 

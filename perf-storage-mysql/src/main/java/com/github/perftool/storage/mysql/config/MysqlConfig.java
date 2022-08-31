@@ -46,4 +46,7 @@ public class MysqlConfig extends QLCommonConfig {
     @Value("${MYSQL_PASSWORD:}")
     public String password;
 
+    @Value("${MYSQL_MAXIMUM_POOL_SIZE:20}")
+    public int maximumPoolSize;
+
 }

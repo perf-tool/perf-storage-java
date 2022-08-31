@@ -101,11 +101,13 @@ public class BootService {
             default -> {
             }
         }
-        log.info("the now key : {}", nowKeys);
+        log.info("current key size is {}", nowKeys.size());
+        log.debug("the now key : {}", nowKeys);
         List<String> keys = new ArrayList<>();
         int needDataSetSize = commonConfig.dataSetSize - nowKeys.size();
         if (needDataSetSize > 0) {
             keys = IDUtils.getTargetIds(needDataSetSize);
+            log.info("generated {} keys", keys);
             switch (storageConfig.storageType) {
                 case DUMMY -> log.info("dummy storage");
                 case MYSQL -> mysqlService.presetData(metricFactory, keys);
@@ -117,6 +119,7 @@ public class BootService {
             }
         }
         keys.addAll(nowKeys);
+        log.info("key size now is {}", keys.size());
         if (storageConfig.storageType == StorageType.DUMMY) {
             log.info("dummy storage");
         } else if (storageConfig.storageType == StorageType.MYSQL) {

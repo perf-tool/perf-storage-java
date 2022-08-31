@@ -37,7 +37,7 @@ public class S3Config extends CommonConfig {
     @Value("${AWS_SIGNER_OVERRIDE_TYPE:AWSS3V4SignerType}")
     public String signerOverrideType;
 
-    @Value("${S3_BUCKET_NAME:testbucket}")
+    @Value("${S3_BUCKET_NAME:perf-bucket}")
     public String bucketName;
 
     @Value("${AWS_SERVICE_ENDPOINT:http://localhost:9000}")
