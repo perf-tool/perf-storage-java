@@ -49,4 +49,10 @@ public class MysqlConfig extends QLCommonConfig {
     @Value("${MYSQL_MAXIMUM_POOL_SIZE:20}")
     public int maximumPoolSize;
 
+    @Value("${MYSQL_SOCKET_TIMEOUT:-1}")
+    public int socketTimeout;
+
+    @Value("${MYSQL_CONNECT_TIMEOUT:-1}")
+    public int connectTimeout;
+
 }

@@ -106,9 +106,19 @@ public class MysqlService {
     public DataSource createDatasource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
-        String jdbcUrl = String.format("jdbc:mariadb://%s:%d/%s?user=%s&password=%s&allowPublicKeyRetrieval=true",
-                mysqlConfig.host, mysqlConfig.port, mysqlConfig.dbName, mysqlConfig.user, mysqlConfig.password);
-        hikariConfig.setJdbcUrl(jdbcUrl);
+        StringBuilder jdbcUrlBuilder = new StringBuilder();
+        jdbcUrlBuilder.append("jdbc:mariadb://").append(mysqlConfig.host).append(":").append(mysqlConfig.port);
+        jdbcUrlBuilder.append("/").append(mysqlConfig.dbName).append("?");
+        jdbcUrlBuilder.append("&user=").append(mysqlConfig.user);
+        jdbcUrlBuilder.append("&password=").append(mysqlConfig.password);
+        jdbcUrlBuilder.append("&allowPublicKeyRetrieval=true");
+        if (mysqlConfig.socketTimeout != -1) {
+            jdbcUrlBuilder.append("&socketTimeout=").append(mysqlConfig.socketTimeout);
+        }
+        if (mysqlConfig.connectTimeout != -1) {
+            jdbcUrlBuilder.append("&connectTimeout=").append(mysqlConfig.connectTimeout);
+        }
+        hikariConfig.setJdbcUrl(jdbcUrlBuilder.toString());
         hikariConfig.setMaximumPoolSize(mysqlConfig.maximumPoolSize);
         return new HikariDataSource(hikariConfig);
     }
