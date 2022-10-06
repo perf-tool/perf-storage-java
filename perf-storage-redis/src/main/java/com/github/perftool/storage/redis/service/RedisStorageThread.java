@@ -22,9 +22,9 @@ package com.github.perftool.storage.redis.service;
 import com.github.perftool.storage.common.AbstractStorageThread;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.utils.RandomUtils;
+import com.github.perftool.storage.redis.RedisClientImpl;
 import com.github.perftool.storage.redis.config.RedisConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 
@@ -32,21 +32,21 @@ import java.util.List;
 @Slf4j
 public class RedisStorageThread extends AbstractStorageThread {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisClientImpl redisClientImpl;
     private final RedisConfig redisConfig;
 
     public RedisStorageThread(List<String> ids, MetricFactory metricFactory,
-                              RedisConfig redisConfig, RedisTemplate<String, Object> redisTemplate) {
+                              RedisConfig redisConfig, RedisClientImpl redisClientImpl) {
         super(redisConfig, metricFactory, ids);
         this.redisConfig = redisConfig;
-        this.redisTemplate = redisTemplate;
+        this.redisClientImpl = redisClientImpl;
     }
 
     @Override
     public void insertData(String id) {
         long start = System.currentTimeMillis();
         try {
-            redisTemplate.opsForValue().set(id, RandomUtils.getRandomStr(redisConfig.dataSize));
+            redisClientImpl.set(id, RandomUtils.getRandomStr(redisConfig.dataSize));
             insertMetricBean.success(System.currentTimeMillis() - start);
         } catch (Exception e) {
             insertMetricBean.fail(System.currentTimeMillis() - start);
@@ -58,7 +58,7 @@ public class RedisStorageThread extends AbstractStorageThread {
     public void updateData(String id) {
         long start = System.currentTimeMillis();
         try {
-            redisTemplate.opsForValue().set(id, RandomUtils.getRandomStr(redisConfig.dataSize));
+            redisClientImpl.set(id, RandomUtils.getRandomStr(redisConfig.dataSize));
             updateMetricBean.success(System.currentTimeMillis() - start);
         } catch (Exception e) {
             updateMetricBean.fail(System.currentTimeMillis() - start);
@@ -71,7 +71,7 @@ public class RedisStorageThread extends AbstractStorageThread {
     public void readData(String id) {
         long start = System.currentTimeMillis();
         try {
-            redisTemplate.opsForValue().get(id);
+            redisClientImpl.get(id);
             readMetricBean.success(System.currentTimeMillis() - start);
         } catch (Exception e) {
             readMetricBean.fail(System.currentTimeMillis() - start);
@@ -83,8 +83,8 @@ public class RedisStorageThread extends AbstractStorageThread {
     public void deleteData(String id) {
         long start = System.currentTimeMillis();
         try {
-            Boolean isOk = redisTemplate.delete(id);
-            if (Boolean.TRUE.equals(isOk)) {
+            Long num = redisClientImpl.del(id);
+            if (num > 0) {
                 deleteMetricBean.success(System.currentTimeMillis() - start);
             } else {
                 deleteMetricBean.fail(System.currentTimeMillis() - start);
