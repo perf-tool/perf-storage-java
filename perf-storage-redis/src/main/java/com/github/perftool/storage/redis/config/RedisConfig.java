@@ -40,7 +40,7 @@ public class RedisConfig extends CommonConfig {
     @Value("${REDIS_USER:}")
     public String user;
 
-    @Value("${REDIS_TIMEOUT:5000}")
+    @Value("${REDIS_TIMEOUT_SECONDS:15}")
     public long timeout;
 
     @Value("${LETTUCE_SHUTDOWN_TIMEOUT_SECONDS:100}")

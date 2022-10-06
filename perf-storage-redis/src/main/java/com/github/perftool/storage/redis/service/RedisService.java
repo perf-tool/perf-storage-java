@@ -19,32 +19,14 @@
 
 package com.github.perftool.storage.redis.service;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.github.perftool.storage.common.metrics.MetricFactory;
+import com.github.perftool.storage.redis.RedisClientImpl;
 import com.github.perftool.storage.redis.config.RedisConfig;
+import io.lettuce.core.KeyScanCursor;
+import io.lettuce.core.ScanArgs;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisClusterConfiguration;
-import org.springframework.data.redis.connection.RedisConfiguration;
-import org.springframework.data.redis.connection.RedisNode;
-import org.springframework.data.redis.connection.RedisPassword;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,39 +35,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-
 @Slf4j
 @Service
 public class RedisService {
-
-    @Autowired
     private RedisConfig redisConfig;
 
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisClientImpl redisClientImpl;
 
-    private final Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer =
-            new Jackson2JsonRedisSerializer<>(Object.class);
+    public RedisService(@Autowired RedisConfig redisConfig) {
+        this.redisConfig = redisConfig;
+    }
 
     public void initDatasource() {
-        this.redisTemplate = createRedisTemplate();
+        this.redisClientImpl = new RedisClientImpl(redisConfig);
     }
 
     public Set<String> listKeys() {
-        Set<String> set = new HashSet<>();
-        Cursor<String> scan = this.redisTemplate.scan(ScanOptions.
-                scanOptions()
-                .count(redisConfig.dataSetSize)
-                .match("*")
-                .build());
-        while (scan.hasNext()) {
-            set.add(scan.next());
-        }
-        return set;
+        KeyScanCursor scan = redisClientImpl.scan(ScanArgs.Builder
+                .limit(redisConfig.dataSetSize)
+                .match("*"));
+        return new HashSet<>(scan.getKeys());
     }
 
     public void presetData(MetricFactory metricFactory, List<String> keys) {
         ExecutorService threadPool = Executors.newFixedThreadPool(redisConfig.presetThreadNum);
-        RedisStorageThread redisStorageThread = new RedisStorageThread(keys, metricFactory, redisConfig, redisTemplate);
+        RedisStorageThread redisStorageThread =
+                new RedisStorageThread(keys, metricFactory, redisConfig, redisClientImpl);
         List<Callable<Object>> callableList =
                 keys.stream().map(s -> Executors.callable(() -> redisStorageThread.insertData(s)))
                         .collect(Collectors.toList());
@@ -98,61 +73,7 @@ public class RedisService {
 
     public void boot(MetricFactory metricFactory, List<String> keys) {
         for (int i = 0; i < redisConfig.threadNum; i++) {
-            new RedisStorageThread(keys, metricFactory, redisConfig, redisTemplate).start();
+            new RedisStorageThread(keys, metricFactory, redisConfig, redisClientImpl).start();
         }
-    }
-
-    private LettuceConnectionFactory lettuceConnectionFactory() {
-        GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
-        genericObjectPoolConfig.setMaxIdle(redisConfig.maxIdle);
-        genericObjectPoolConfig.setMinIdle(redisConfig.minIdle);
-        genericObjectPoolConfig.setMaxTotal(redisConfig.maxActive);
-        RedisConfiguration redisConfiguration;
-        if (redisConfig.redisClusterEnable) {
-            RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
-            String[] urls = redisConfig.clusterNodeUrl.split(",");
-            for (String s : urls) {
-                String[] url = s.split(":");
-                redisClusterConfiguration.addClusterNode(new RedisNode(url[0], Integer.parseInt(url[1])));
-            }
-            redisClusterConfiguration.setUsername(redisConfig.user);
-            redisClusterConfiguration.setPassword(redisConfig.password);
-            redisConfiguration = redisClusterConfiguration;
-        } else {
-            RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-            String[] url = redisConfig.clusterNodeUrl.split(",");
-            redisStandaloneConfiguration.setDatabase(redisConfig.database);
-            redisStandaloneConfiguration.setHostName(url[0]);
-            redisStandaloneConfiguration.setPort(Integer.parseInt(url[1]));
-            redisStandaloneConfiguration.setPassword(RedisPassword.of(redisConfig.password));
-            redisConfiguration = redisStandaloneConfiguration;
-        }
-
-        LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
-                .commandTimeout(Duration.ofMillis(redisConfig.timeout))
-                .shutdownTimeout(Duration.ofMillis(redisConfig.shutDownTimeout))
-                .poolConfig(genericObjectPoolConfig)
-                .build();
-
-        LettuceConnectionFactory factory = new LettuceConnectionFactory(redisConfiguration, clientConfig);
-        factory.afterPropertiesSet();
-        return factory;
-    }
-
-    private RedisTemplate<String, Object> createRedisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(lettuceConnectionFactory());
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        jackson2JsonRedisSerializer.setObjectMapper(mapper);
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        template.setKeySerializer(stringRedisSerializer);
-        template.setHashKeySerializer(stringRedisSerializer);
-        template.setValueSerializer(jackson2JsonRedisSerializer);
-        template.setHashValueSerializer(jackson2JsonRedisSerializer);
-        template.afterPropertiesSet();
-        return template;
     }
 }
