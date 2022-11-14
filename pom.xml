@@ -81,6 +81,11 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.perf-tool</groupId>
+            <artifactId>perf-trace</artifactId>
+            <version>0.0.8</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
@@ -114,11 +119,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.perf-tool</groupId>
-            <artifactId>perf-trace</artifactId>
-            <version>0.0.8</version>
         </dependency>
     </dependencies>
 
