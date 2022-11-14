@@ -25,6 +25,11 @@ import com.github.perftool.storage.common.AbstractStorageThread;
 import com.github.perftool.storage.common.metrics.MetricFactory;
 import com.github.perftool.storage.common.utils.RandomUtils;
 import com.github.perftool.storage.s3.config.S3Config;
+import io.github.perftool.trace.module.SpanInfo;
+import io.github.perftool.trace.module.TraceBean;
+import io.github.perftool.trace.report.ITraceReporter;
+import io.github.perftool.trace.report.ReportUtil;
+import io.github.perftool.trace.util.InboundCounter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
@@ -37,18 +42,33 @@ public class S3StorageThread extends AbstractStorageThread {
     private final S3Config s3Config;
     private final AmazonS3 s3Client;
 
+    private final ITraceReporter traceReporter = ReportUtil.getReporter();
+
+    private final InboundCounter inboundCounter;
+
     public S3StorageThread(S3Config s3Config, MetricFactory metricFactory, AmazonS3 s3Client, List<String> keys) {
         super(s3Config, metricFactory, keys);
         this.s3Config = s3Config;
         this.s3Client = s3Client;
+        inboundCounter = new InboundCounter(999);
     }
 
     @Override
     public void insertData(String key) {
         long start = System.currentTimeMillis();
         try {
+            TraceBean traceBean = new TraceBean();
+            String traceId = String.format("%s-%d", ReportUtil.traceIdPrefix(), inboundCounter.get());
+            traceBean.setTraceId(traceId);
+            SpanInfo spanInfo = new SpanInfo();
+            spanInfo.setSpanId(traceId);
+            traceBean.setSpanInfo(spanInfo);
+            traceReporter.reportTrace(traceBean);
             s3Client.putObject(s3Config.bucketName, key, RandomUtils.getRandomStr(s3Config.dataSize));
             insertMetricBean.success(System.currentTimeMillis() - start);
+            String spanId = String.format("%s-%d", ReportUtil.spanIdPrefix(), inboundCounter.get());
+            traceBean.getSpanInfo().setSpanId(spanId);
+            traceReporter.reportTrace(traceBean);
         } catch (Exception e) {
             insertMetricBean.fail(System.currentTimeMillis() - start);
             log.error("s3 put object error ", e);
