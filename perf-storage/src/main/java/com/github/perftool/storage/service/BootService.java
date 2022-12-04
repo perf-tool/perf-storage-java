@@ -31,11 +31,11 @@ import com.github.perftool.storage.mysql.service.MysqlService;
 import com.github.perftool.storage.redis.service.RedisService;
 import com.github.perftool.storage.s3.service.S3Service;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
