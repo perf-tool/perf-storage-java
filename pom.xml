@@ -63,7 +63,7 @@
         <!-- plugin -->
         <checkstyle-plugin.version>3.2.1</checkstyle-plugin.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <puppycrawl.version>10.7.0</puppycrawl.version>
+        <puppycrawl.version>10.10.0</puppycrawl.version>
         <spotbugs-maven-plugin.version>4.7.3.2</spotbugs-maven-plugin.version>
     </properties>
 
