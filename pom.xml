@@ -55,7 +55,7 @@
         <aws-java-sdk-s3.version>1.12.479</aws-java-sdk-s3.version>
         <cassandra.version>3.11.3</cassandra.version>
         <codahale-metrics-core.version>3.0.2</codahale-metrics-core.version>
-        <commons-io.version>2.11.0</commons-io.version>
+        <commons-io.version>2.13.0</commons-io.version>
         <guave.version>31.1-jre</guave.version>
         <HikariCP.version>5.0.1</HikariCP.version>
         <jetcd.version>0.7.5</jetcd.version>
