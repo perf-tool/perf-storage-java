@@ -61,7 +61,7 @@
         <jetcd.version>0.7.5</jetcd.version>
         <zookeeper.version>3.8.1</zookeeper.version>
         <!-- plugin -->
-        <checkstyle-plugin.version>3.2.1</checkstyle-plugin.version>
+        <checkstyle-plugin.version>3.3.0</checkstyle-plugin.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
         <puppycrawl.version>10.12.0</puppycrawl.version>
         <spotbugs-maven-plugin.version>4.7.3.2</spotbugs-maven-plugin.version>
