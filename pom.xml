@@ -58,7 +58,7 @@
         <commons-io.version>2.13.0</commons-io.version>
         <guave.version>32.1.1-jre</guave.version>
         <HikariCP.version>5.0.1</HikariCP.version>
-        <jetcd.version>0.7.5</jetcd.version>
+        <jetcd.version>0.7.6</jetcd.version>
         <zookeeper.version>3.8.2</zookeeper.version>
         <!-- plugin -->
         <checkstyle-plugin.version>3.3.0</checkstyle-plugin.version>
