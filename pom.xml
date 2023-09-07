@@ -53,7 +53,7 @@
         <!-- dependency -->
         <annotations.version>24.0.0</annotations.version>
         <aws-java-sdk-s3.version>1.12.537</aws-java-sdk-s3.version>
-        <cassandra.version>3.11.4</cassandra.version>
+        <cassandra.version>3.11.5</cassandra.version>
         <codahale-metrics-core.version>3.0.2</codahale-metrics-core.version>
         <commons-io.version>2.13.0</commons-io.version>
         <guave.version>32.1.2-jre</guave.version>
