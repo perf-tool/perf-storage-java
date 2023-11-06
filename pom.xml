@@ -52,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- dependency -->
         <annotations.version>24.0.0</annotations.version>
-        <aws-java-sdk-s3.version>1.12.537</aws-java-sdk-s3.version>
+        <aws-java-sdk-s3.version>1.12.581</aws-java-sdk-s3.version>
         <cassandra.version>3.11.4</cassandra.version>
         <codahale-metrics-core.version>3.0.2</codahale-metrics-core.version>
         <commons-io.version>2.13.0</commons-io.version>
